@@ -176,7 +176,7 @@ def calculate_signed_distances(test_corrected, ref, bld):
     test_cor = test_corrected.astype(int)
     location = []
     # 1: inside, 0: on the contour, -1: outside
-    for i in range(len(points_ref)):
+    for i in range(len(ref)):
         location.append(
             cv.pointPolygonTest(contour=test_cor,
                                 pt=ref[i].astype(float),
