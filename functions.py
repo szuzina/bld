@@ -75,14 +75,14 @@ def get_contour_from_image(file_path):
     return cont
 
 
-def move_COMs(c_ref, c_test):
+def move_coms(c_ref, c_test):
     """
     Moves the test contour to align the center of mass with the COM of the reference contour.
     Returns: the moved test contour.
     """
-    COM_ref = c_ref.mean(axis=0)
-    COM_test = c_test.mean(axis=0)
-    move_vector = COM_ref - COM_test
+    com_ref = c_ref.mean(axis=0)
+    com_test = c_test.mean(axis=0)
+    move_vector = com_ref - com_test
     c_test_corrected = c_test + move_vector
     return c_test_corrected
 
@@ -221,9 +221,9 @@ def calculate_corrected_bld(df, bld, loc,
 
     test_points_paired = test_paired.to_numpy()
 
-    COM_ref = ref.mean(axis=0)
-    COM_test = test.mean(axis=0)
-    move_vector = COM_ref - COM_test
+    com_ref = ref.mean(axis=0)
+    com_test = test.mean(axis=0)
+    move_vector = com_ref - com_test
 
     paired_test_points_moved_back = test_points_paired - move_vector
 
