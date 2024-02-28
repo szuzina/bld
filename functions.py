@@ -131,30 +131,43 @@ def calculate_bld(df):
     bld: the BLD values for each reference point
     """
 
+    # the columns correspond to the test points
+    # the column minimum is the minimum distance from the reference points
     oszlop_min_indexek = np.argmin(df.values, axis=0)
 
     tabla = oszlop_min_indexek.reshape((-1, 1)) == \
         np.arange(0, df.shape[0], 1).reshape((1, -1))
+    # filtering the reference points (rows) to which there exist column minimum
     szures_sor_index_van_oszlop_minimum = tabla.sum(axis=0) > 0
+    # the BMaxD is the maximum of the column minimums
+    # we find the indices of BMaxD distances
     bmaxd_indexek = np.arange(
       0, df.shape[0], 1
     )[szures_sor_index_van_oszlop_minimum]
+    # if there is no BMaxD, then FMinD is used
+    # we find the indices of FMinD distances
     fmind_indexek = np.arange(
       0, df.shape[0], 1
     )[~szures_sor_index_van_oszlop_minimum]
 
     bld = np.zeros((df.shape[0], ))
+
+    # we find the values of FMinD distances
     bld[fmind_indexek] = df.min(axis=1).iloc[fmind_indexek]
 
     tabla_2 = (oszlop_min_indexek.reshape((1, -1)) ==
                np.arange(0, df.shape[0], 1).reshape((-1, 1)))
+    
+    # we find the values of BMaxD distances
     bmaxd = np.max(tabla_2 * df.min(axis=0).values.reshape((-1, )),
                    axis=1
                    )[bmaxd_indexek]
 
     fmind = df.min(axis=1).iloc[bmaxd_indexek].values
 
+    # BLD is the maximum of BMaxD and FMinD
     bld_bmaxd_letezik = np.maximum(bmaxd, fmind)
+    # if BMaxD does not exist, then BLD = FMinD
     bld[bmaxd_indexek] = bld_bmaxd_letezik
 
     return bmaxd_indexek, fmind, bmaxd, bld
