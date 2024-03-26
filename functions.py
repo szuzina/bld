@@ -218,19 +218,19 @@ def calculate_corrected_bld(df, bld, loc,
         which are paires of reference contour points based on BLD
     """
     sor_bld_indexek = np.zeros(len(df))
-    # bocsi, ezt nem sikerült for ciklus nélkül megoldanom :(
+    
     for i in range(len(df)):
-        # a referencia kontúr pontjaihoz rendeljük a párjukat (sorszámok)
+        # we assign the pairs to the reference contour points
         sor_bld_indexek[i] = np.argwhere(df.iloc[i].values == bld[i])
 
     test_df = pd.DataFrame(test_corrected, columns=['x', 'y'])
     list_sor_bld_indexek = sor_bld_indexek.tolist()
     test_paired = test_df.iloc[list_sor_bld_indexek]
 
-    # visszatoljuk azokat a teszt pontokat az eredeti helyükre,
-    #  amelyek valameny referencia pont párja lett
-    # ezek a teszt pontok a referencia pontok sorrendjében vannak
-    #  (az i-edik ref pont párja az i-edik teszt pont)
+    # we move back the test points to the original location
+    # we only use the test points, which are paired with reference points
+    # these test points are in the same order as the reference points
+    # (the pair of the ith reference point is the ith test point
 
     test_points_paired = test_paired.to_numpy()
 
@@ -243,7 +243,7 @@ def calculate_corrected_bld(df, bld, loc,
     final_bld = np.multiply(
       loc,
       np.sqrt(((ref - paired_test_points_moved_back) ** 2).sum(axis=1))
-    )  # kiszámoljuk a pontok távolságát
+    )  # calculate the distance of the points in each pair
 
     return final_bld, paired_test_points_moved_back
 
