@@ -1,3 +1,9 @@
+import io
+import os
+import zipfile
+
+import requests
+
 class DataDownloaderColab:
     def __init__(self, ref_url, test_url, data_folder="data"):
         self.data_folder = data_folder
