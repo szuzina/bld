@@ -2,7 +2,7 @@
 Bidirectional local distance in Python
 
 Link of the Colab notebook ("main"):
-https://colab.research.google.com/drive/1ScIdMkZu4IugXnQkUSwbABtgzZlk35Gr
+(https://colab.research.google.com/drive/1OnJABs1JgkQyQB6p3IpbVhhAFSL36dps?usp=sharing)
 
 Background: 
 In the medical field, more and more image data is being created every day. The emerging quantity of data makes the different algorithms more and more important as nowadays it is quite impossible to analyze this large quantity of data by hand. There are several different kinds of automatic or semi-automatic medical image segmentation algorithms, but it is crucial to evaluate their performance in a clinically relevant manner. Several widely used evaluation metrics (Dice and Jaccard index, Hausdorff distance, etc.) are poorly correlated with clinical relevance. These indices may show very good value, but for example, if a crucial organ is close to the segmented area, a minimal overestimation of the lesion may have a huge clinical effect. 
