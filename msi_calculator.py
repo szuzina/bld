@@ -42,12 +42,12 @@ class MSICalculator:
         return test_points_in_order
 
     def run(self):
-        for t in self.test_points_in_order:
-            self.msi.append(self.run_for_single_contour(t=t))
+        for r, t in zip(self.ref_points, self.test_points_in_order):
+            self.msi.append(self.run_for_single_contour(r=r, t=t))
 
-    def run_for_single_contour(self, t):
+    def run_for_single_contour(self, r, t):
         test_contour = t
-        reference_contour = self.ref_points[self.test_points_in_order.index(t)]
+        reference_contour = r
 
         points_test_corrected = move_coms(c_ref=reference_contour,
                                           c_test=test_contour)
