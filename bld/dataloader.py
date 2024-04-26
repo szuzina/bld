@@ -3,7 +3,7 @@ import glob
 import SimpleITK as sitk
 import cv2 as cv
 from natsort import natsorted
-import numpy as np
+
 
 class DataLoader:
     def __init__(self, number, data_folder="data", root_folder="./"):

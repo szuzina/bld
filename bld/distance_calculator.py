@@ -23,7 +23,7 @@ class DistanceCalculator:
         c_test = self.test_contour.T
 
         n_1 = c_ref.shape[0]
-        n_2 = c_test.shape[0]
+        # n_2 = c_test.shape[0]
         v1v2 = c_ref @ c_test.T
         v12 = np.sum(c_ref ** 2, axis=1).reshape((n_1, 1))
         v22 = np.sum(c_test ** 2, axis=1)

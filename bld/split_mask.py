@@ -67,6 +67,8 @@ class MaskSplitter:
 
     @staticmethod
     def find_start_and_end_points(points_filtered, contour):
+        start = None
+        end = None
         for k in range(len(points_filtered)):
             f1 = points_filtered[k]
             p1 = tuple(contour[f1][0])

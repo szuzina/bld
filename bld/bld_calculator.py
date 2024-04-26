@@ -39,7 +39,7 @@ class BLDCalculator:
         oszlop_min_indexek = np.argmin(self.distance_df.values, axis=0)
 
         tabla = oszlop_min_indexek.reshape((-1, 1)) == \
-                np.arange(0, self.distance_df.shape[0], 1).reshape((1, -1))
+            np.arange(0, self.distance_df.shape[0], 1).reshape((1, -1))
         # filtering the reference points (rows) to which there exist column minimum
         szures_sor_index_van_oszlop_minimum = tabla.sum(axis=0) > 0
         # the BMaxD is the maximum of the column minimums
@@ -93,7 +93,7 @@ class BLDCalculator:
         """
 
         # integers are needed for the PolygonTest function
-        #test_cor = self.test_corrected_points.astype(int)
+        # test_cor = self.test_corrected_points.astype(int)
 
         # polygon is a list of tuples representing the vertices of the polygon
         polygon = []

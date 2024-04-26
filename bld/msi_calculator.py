@@ -1,8 +1,10 @@
+from typing import Union
+
 import numpy as np
 import pandas as pd
 
-from bld_calculator import BLDCalculator
-from distance_calculator import DistanceCalculator
+from bld.bld_calculator import BLDCalculator
+from bld.distance_calculator import DistanceCalculator
 
 
 class MSICalculator:
@@ -87,7 +89,8 @@ class MSICalculator:
         return msi
 
     @staticmethod
-    def weight_function(d: float, l: float):
+    def weight_function(d: Union[float, pd.DataFrame],
+                        l: Union[float, pd.DataFrame]) -> Union[float, pd.DataFrame]:
         """
         Defines the weight function.
         Parameters:
