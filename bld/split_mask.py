@@ -23,8 +23,9 @@ class MaskSplitter:
         #     points[, hull[, clockwise[, returnPoints]]]
         # ) ->	hull
         hull = cv.convexHull(contour, returnPoints=False)
+        convex_hull_area = cv.contourArea(hull)
 
-        if cv.contourArea(contour) > self.min_area:
+        if cv.contourArea(contour) > self.min_area and cv.contourArea(contour) > convex_hull_area:
             # cv.convexityDefects (contour, convexhull, convexityDefect)
             #     convexityDefect:	the output vector of convexity defects.
             #     (start_index_of_hull, end_index_of_hull, farthest_pt_index, max_depth)
