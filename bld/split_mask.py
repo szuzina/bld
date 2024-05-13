@@ -1,13 +1,15 @@
 import numpy as np
 import cv2 as cv
+import matplotlib.pyplot as plt
 
 
 class MaskSplitter:
-    def __init__(self, mask):
-        self.min_area = 20
+    def __init__(self, im_slice):
+        self.min_area = 50
         self.max_dist_ratio = 0.5
-        self.mask = mask
-        self.thresh = self.mask.copy().astype(np.uint8)
+        self.slice = im_slice
+        self.thresh = self.slice.copy().astype(np.uint8)
+        self.splitted = self.thresh.copy()
 
     def run(self):
         # cv.findContours(
@@ -23,9 +25,13 @@ class MaskSplitter:
         #     points[, hull[, clockwise[, returnPoints]]]
         # ) ->	hull
         hull = cv.convexHull(contour, returnPoints=False)
-        convex_hull_area = cv.contourArea(hull)
+        hullpoints = contour[hull].squeeze()
+        if len(hullpoints) > 2:
+            area = cv.contourArea(hullpoints)
+        else:
+            area = 0
 
-        if cv.contourArea(contour) > self.min_area and convex_hull_area / cv.contourArea(contour) > 1.1:
+        if cv.contourArea(contour) > self.min_area and area / cv.contourArea(contour) > 1.2:
             # cv.convexityDefects (contour, convexhull, convexityDefect)
             #     convexityDefect:	the output vector of convexity defects.
             #     (start_index_of_hull, end_index_of_hull, farthest_pt_index, max_depth)
@@ -51,7 +57,9 @@ class MaskSplitter:
                 contour=contour
             )
             # cv2.line(image, start_point, end_point, color, thickness)
-            cv.line(self.thresh, start, end, [0, 0, 0], 1)
+            self.splitted = cv.line(self.splitted, start, end, [0, 0, 0], 1)
+            plt.imshow(self.splitted)
+            print("Did a split.")
 
         # if there is only one very concave area, we have to split with another method
         if len(points_filtered) == 1:
@@ -88,3 +96,4 @@ class MaskSplitter:
                         start = p1
 
         return end, start
+
