@@ -101,13 +101,9 @@ class BLDCalculator:
             px = self.test_corrected_points.T[i][0]
             py = self.test_corrected_points.T[i][1]
             polygon.append((px, py))
-        # print('polygon', polygon)
         poly = np.array(polygon, dtype=np.float32)
-        # print('poly', poly)
 
         location = []
-        # print("Point:", pt)
-        # print("Type of pt:", type(pt))
         for i in range(self.reference_points.shape[1]):
             # 1: inside, 0: on the contour, -1: outside
             pt = (np.float32(self.reference_points.T[i][0]),
@@ -120,7 +116,6 @@ class BLDCalculator:
         bld_signed = np.multiply(loc, self.dist_bld)
         self.dist_bld_signed = bld_signed
         self.location = loc
-        # print(loc)
 
     def calculate_corrected_bld(self):
         """
