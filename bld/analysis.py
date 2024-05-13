@@ -31,6 +31,6 @@ def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
 def calculate_ldp(dt, loc, bld):
     fmins = np.zeros((dt.shape[0],))
     fmins = dt.min(axis=1)
-    fmins_signed = np.multiply(loc, fmins)  # előjeles FMinD-t ábrázolunk
+    fmins_signed = np.multiply(loc, fmins)
     diff = bld - fmins
     return fmins_signed, diff
