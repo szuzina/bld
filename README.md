@@ -13,4 +13,4 @@ As the widely used metrics do not correlate with the clinical relevance and ther
 Summary: 
 We created a new segmentation evaluation metric which can be adjusted based on the planned clinical aim.
 Currently an inside and an outside penalty level can be defined, and the MSI is calculated by the BLD and the previously defined weight function. 
-The code at this point works with one contour on one slice, it cannot deal with two contours (the aggregation is not defined yet). However, the get_contour_from_image function returns with more than one list if there is more than one contour on one slice.
+The code at this point works with more than one contour on one slice, howevwe, the aggregation is not defined yet (we get as many MSI values as the number of the contours). However, the get_contour_from_image function returns with more than one list if there is more than one contour on one slice.
