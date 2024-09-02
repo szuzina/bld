@@ -3,6 +3,7 @@ import os
 import zipfile
 
 import requests
+import gdown
 
 
 class DataDownloader:
@@ -22,10 +23,13 @@ class DataDownloader:
         """
         if not os.path.isdir(self.root_folder + self.data_folder):
             os.makedirs(self.data_folder, exist_ok=True)
-            r = requests.get(self.ref_url)
-            z = zipfile.ZipFile(io.BytesIO(r.content))
-            z.extractall(self.root_folder + self.data_folder + "/masks_ref")
-            r = requests.get(self.test_url)
-            z = zipfile.ZipFile(io.BytesIO(r.content))
-            z.extractall(self.root_folder + self.data_folder + "/masks_test")
+            
+            gdown.download(self.ref_url, output=self.root_folder + self.data_folder + "/masks_ref.zip", quiet=False)
+            gdown.download(self.test_url, output=self.root_folder + self.data_folder + "/masks_test.zip", quiet=False)
+        
+            with zipfile.ZipFile(self.root_folder + self.data_folder + "/masks_ref.zip", 'r') as zip_ref:
+                zip_ref.extractall(self.root_folder + self.data_folder + "/masks_ref")
+            with zipfile.ZipFile(self.root_folder + self.data_folder + "/masks_test.zip", 'r') as zip_test:
+                zip_test.extractall(self.root_folder + self.data_folder + "/masks_test")
+            
             return 0
