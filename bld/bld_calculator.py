@@ -136,8 +136,11 @@ class BLDCalculator:
         sor_bld_indexek = np.zeros(len(self.distance_df))
         for i in range(len(self.distance_df)):
             # we assign the pairs to the reference contour points
-            sor_bld_indexek[i] = np.argwhere(
-                self.distance_df.iloc[i].values == self.dist_bld[i])
+           # Select the first index if np.argwhere returns a 2D array
+            idx = np.argwhere(self.distance_df.iloc[i].values == self.dist_bld[i])
+            if idx.ndim > 1:
+                idx = idx[0]
+            sor_bld_indexek[i] = idx
 
         test_df = pd.DataFrame(self.test_corrected_points.T, columns=['x', 'y'])
         list_sor_bld_indexek = sor_bld_indexek.tolist()
