@@ -1,3 +1,5 @@
+import numpy as np
+
 class CorrelationAnalyzer:
     def __init__(self, msi, hausdorff, dice, jaccard, manual_score):
         self.msi = msi
