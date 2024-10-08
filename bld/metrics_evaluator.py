@@ -2,6 +2,8 @@ import glob
 from natsort import natsorted
 import numpy as np
 from scipy.stats import spearmanr, pearsonr
+from scipy.spatial.distance import directed_hausdorff
+from sklearn.metrics import jaccard_score, f1_score
 import SimpleITK as sitk
 
 from bld.dataloader import DataLoader
