@@ -5,7 +5,7 @@ from scipy.stats import spearmanr, pearsonr
 import SimpleITK as sitk
 
 from bld.dataloader import DataLoader
-from msi_calculator import MSICalculator
+from bld.msi_calculator import MSICalculator
 
 class MetricsEvaluator:
   def __init__(self, patient, data_folder='data', root_folder='./', il = 1, ol = 1):
