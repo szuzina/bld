@@ -1,5 +1,5 @@
 import glob
-import natsorted
+from natsort import natsorted
 import numpy as np
 from scipy.stats import spearmanr, pearsonr
 import SimpleITK as sitk
