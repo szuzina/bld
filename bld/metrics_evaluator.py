@@ -93,7 +93,7 @@ class MetricsEvaluator:
         print(i, ":")
         points_ref = self.dl.c_ref['slice' + str(i)]
         points_test = self.dl.c_test['slice' + str(i)]
-        e = check_contours_on_slice(test_points=points_test,
+        e = self.check_contours_on_slice(test_points=points_test,
                               ref_points=points_ref)
 
         if e == False: # there is no error while checking the contours
