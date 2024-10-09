@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import spearmanr, pearsonr
 
+
 class CorrelationAnalyzer:
     def __init__(self, msi, hausdorff, dice, jaccard, manual_score):
         self.msi = msi
@@ -8,6 +9,7 @@ class CorrelationAnalyzer:
         self.dice = dice
         self.jaccard = jaccard
         self.manual_score = manual_score
+
         self.median = self.calculate_median()
 
     def calculate_median(self):
