@@ -1,6 +1,5 @@
 import numpy as np
 import cv2 as cv
-import matplotlib.pyplot as plt
 
 
 class MaskSplitter:
@@ -56,10 +55,6 @@ class MaskSplitter:
                 points_filtered=points_filtered,
                 contour=contour
             )
-            # cv2.line(image, start_point, end_point, color, thickness)
-            self.splitted = cv.line(self.splitted, start, end, [0, 0, 0], 1)
-            plt.imshow(self.splitted)
-            print("Did a split.")
 
         # if there is only one very concave area, we have to split with another method
         if len(points_filtered) == 1:
