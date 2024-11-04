@@ -5,8 +5,8 @@ from scipy.spatial.distance import directed_hausdorff
 import SimpleITK as sitk
 from sklearn.metrics import jaccard_score, f1_score
 
-from bld.dataloader import DataLoader
-from bld.msi_calculator import MSICalculator
+from bld.data.dataloader import DataLoader
+from bld.evaluation.msi_calculator import MSICalculator
 
 
 class MetricsEvaluator:
