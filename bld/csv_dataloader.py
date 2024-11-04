@@ -1,8 +1,9 @@
-import gdown
 import glob
 import os
-import pandas as pd
 import zipfile
+
+import gdown
+import pandas as pd
 
 
 class CSVDataLoader:
