@@ -1,7 +1,10 @@
 cachetools==5.3.3
 certifi==2024.2.2
 charset-normalizer==3.3.2
+contourpy==1.2.1
+cycler==0.12.1
 db-dtypes==1.2.0
+fonttools==4.51.0
 google-api-core==2.11.1
 google-auth==2.27.0
 google-auth-oauthlib==1.2.0
@@ -14,7 +17,9 @@ googleapis-common-protos==1.63.0
 grpcio==1.62.1
 grpcio-status==1.48.2
 idna==3.6
+kiwisolver==1.4.5
 lxml==4.9.4
+matplotlib==3.8.4
 natsort==8.4.0
 numpy==1.25.2
 oauthlib==3.2.2
@@ -27,12 +32,14 @@ pandas-datareader==0.10.0
 pandas-gbq==0.19.2
 pandas-stubs==2.0.3.230814
 pandocfilters==1.5.1
+pillow==10.3.0
 proto-plus==1.23.0
 protobuf==3.20.3
 pyarrow==14.0.2
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pydata-google-auth==1.8.2
+pyparsing==3.1.2
 python-dateutil==2.8.2
 pytz==2023.4
 requests==2.31.0
