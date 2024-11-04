@@ -7,24 +7,25 @@ import zipfile
 
 class CSVDataLoader:
 
-    def __init__(self, p_number, idx, csv_data_id):
+    def __init__(self, p_number, idx, csv_data_id, root_folder='/content'):
 
         self.csv_data_id = csv_data_id
         self.data = self.create_json()
         self.patient_data = self.data[self.data['source_index'] == p_number]
         self.filtered_scores = self.find_filtered_scores(filtered_rows=idx)
+        self.root_folder = root_folder
 
     def create_json(self):
         drive_url = 'https://drive.google.com/uc?export=download&id='
         csv_directory_url = drive_url + self.csv_data_id
         # download the csv directory
-        gdown.download(csv_directory_url, output='/content/bld/data/csv_zip', quiet=False)
-        with zipfile.ZipFile('/content/bld/data/csv_zip', 'r') as zip_ref:
-            zip_ref.extractall('/content/bld/data/csv_dir')
+        gdown.download(csv_directory_url, output=self.root_folder+'/bld/data/csv_zip', quiet=False)
+        with zipfile.ZipFile(self.root_folder + '/bld/data/csv_zip', 'r') as zip_ref:
+            zip_ref.extractall(self.root_folder + '/bld/data/csv_dir')
 
         # create json file
-        csv_directory = '/content/bld/data/csv_dir'
-        json_file_path = '/content/bld/data/combined_data.json'
+        csv_directory = self.root_folder + '/bld/data/csv_dir'
+        json_file_path = self.root_folder + '/bld/data/combined_data.json'
 
         dataframes = []
 
