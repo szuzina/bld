@@ -26,10 +26,6 @@ class CorrelationAnalyzer:
         correlation_1_3 = spearmanr(self.median, self.metrics.dice)
         correlation_1_4 = spearmanr(self.median, self.metrics.jaccard)
         correlation_1_5 = spearmanr(self.median, self.manual_score)
-        # print("Spearman MSI with Hausdorff:", correlation_1_2)
-        # print("Spearman MSI with Dice:", correlation_1_3)
-        # print("Spearman MSI with Jaccard:", correlation_1_4)
-        # print("Spearman MSI and manual score:", correlation_1_5)
 
         self.results["spearman_msi_hausdorff"] = correlation_1_2
         self.results["spearman_msi_dice"] = correlation_1_3
@@ -42,10 +38,6 @@ class CorrelationAnalyzer:
         correlation_1_3 = pearsonr(self.median, self.metrics.dice)
         correlation_1_4 = pearsonr(self.median, self.metrics.jaccard)
         correlation_1_6 = pearsonr(self.median, self.manual_score)
-        # print("Pearson MSI with Hausdorff:", correlation_1_2)
-        # print("Pearson MSI with Dice:", correlation_1_3)
-        # print("Pearson MSI with Jaccard:", correlation_1_4)
-        # print("Pearson MSI and manual score:", correlation_1_6)
 
         self.results["pearson_msi_hausdorff"] = correlation_1_2
         self.results["pearson_msi_dice"] = correlation_1_3
@@ -56,18 +48,12 @@ class CorrelationAnalyzer:
         """Find both Spearman and Pearson correlations between a traditional metric and manual score."""
         correlation_1 = spearmanr(self.metrics.hausdorff, self.manual_score)
         correlation_2 = pearsonr(self.metrics.hausdorff, self.manual_score)
-        # print("Spearman Hausdorff and manual score:", correlation_1)
-        # print("Pearson Hausdorff and manual score:", correlation_2)
 
         correlation_3 = spearmanr(self.metrics.dice, self.manual_score)
         correlation_4 = pearsonr(self.metrics.dice, self.manual_score)
-        # print("Spearman Dice and manual score:", correlation_3)
-        # print("Pearson Dice and manual score:", correlation_4)
 
         correlation_5 = spearmanr(self.metrics.jaccard, self.manual_score)
         correlation_6 = pearsonr(self.metrics.jaccard, self.manual_score)
-        # print("Spearman Jaccard and manual score:", correlation_5)
-        # print("Pearson Jaccard and manual score:", correlation_6)
 
         self.results["spearman_hausdorff_manual"] = correlation_1
         self.results["pearson_hausdorff_manual"] = correlation_2
