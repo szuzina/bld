@@ -11,10 +11,10 @@ class CSVDataLoader:
     def __init__(self, p_number, idx, csv_data_id, root_folder='/content'):
 
         self.csv_data_id = csv_data_id
+        self.root_folder = root_folder
         self.data = self.create_json()
         self.patient_data = self.data[self.data['source_index'] == p_number]
         self.filtered_scores = self.find_filtered_scores(filtered_rows=idx)
-        self.root_folder = root_folder
 
     def create_json(self):
         drive_url = 'https://drive.google.com/uc?export=download&id='
