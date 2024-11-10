@@ -42,5 +42,5 @@ class CSVDataLoader:
         return combined_df
 
     def find_filtered_scores(self, filtered_rows):
-        filtered_scores = self.patient_data.loc[self.patient_data.iloc[:, 0].isin(filtered_rows)].iloc[:, 2].tolist()
+        filtered_scores = self.patient_data.loc[self.patient_data.iloc[:, 0].isin(filtered_rows)].iloc[:, 1].tolist()
         return filtered_scores
