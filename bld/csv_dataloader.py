@@ -30,7 +30,7 @@ class CSVDataLoader:
         dataframes = []
 
         for idx, csv_file in enumerate(glob.glob(os.path.join(csv_directory, '*.csv')), start=1):
-            df = pd.read_csv(csv_file, header=None, sep=',')
+            df = pd.read_csv(csv_file, header=None, sep=';')
             df['source_index'] = idx  # Add source index column
             dataframes.append(df)
 
