@@ -12,9 +12,9 @@ class DataDownloader:
         self.ref_url = ref_url
         self.test_url = test_url
 
-        self.upload_files()
+        self.download_files()
 
-    def upload_files(self):
+    def download_files(self):
         """
         Upload all the currently available reference and test segmentations.
         Create a folder for the reference files (masks_ref) and test files (masks_test) in the data folder.
