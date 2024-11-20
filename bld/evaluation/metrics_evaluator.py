@@ -6,7 +6,7 @@ import SimpleITK as sitk
 from sklearn.metrics import jaccard_score, f1_score
 
 from bld.data.dataloader import DataLoader
-from bld.evaluation.msi_calculator import MSICalculator
+from bld.metrics.msi_calculator import MSICalculator
 
 
 class MetricsEvaluator:

@@ -3,8 +3,8 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-from bld.evaluation.bld_calculator import BLDCalculator
-from bld.evaluation.distance_calculator import DistanceCalculator
+from bld.metrics.bld_calculator import BLDCalculator
+from bld.metrics.distance_calculator import DistanceCalculator
 
 
 class MSICalculator:
