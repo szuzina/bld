@@ -46,21 +46,14 @@ class CorrelationAnalyzer:
 
     def find_spearman_pearson_traditional_with_manual_score(self):
         """Find both Spearman and Pearson correlations between a traditional metric and manual score."""
-        correlation_1 = spearmanr(self.metrics.hausdorff, self.manual_score)
-        correlation_2 = pearsonr(self.metrics.hausdorff, self.manual_score)
-
-        correlation_3 = spearmanr(self.metrics.dice, self.manual_score)
-        correlation_4 = pearsonr(self.metrics.dice, self.manual_score)
-
-        correlation_5 = spearmanr(self.metrics.jaccard, self.manual_score)
-        correlation_6 = pearsonr(self.metrics.jaccard, self.manual_score)
-
-        self.results["spearman_hausdorff_manual"] = correlation_1
-        self.results["pearson_hausdorff_manual"] = correlation_2
-        self.results["spearman_dice_manual"] = correlation_3
-        self.results["pearson_dice_manual"] = correlation_4
-        self.results["spearman_jaccard_manual"] = correlation_5
-        self.results["pearson_jaccard_manual"] = correlation_6
+        self.results.update({
+            "spearman_hausdorff_manual": spearmanr(self.metrics.hausdorff, self.manual_score),
+            "pearson_hausdorff_manual": pearsonr(self.metrics.hausdorff, self.manual_score),
+            "spearman_dice_manual": spearmanr(self.metrics.dice, self.manual_score),
+            "pearson_dice_manual": pearsonr(self.metrics.dice, self.manual_score),
+            "spearman_jaccard_manual": spearmanr(self.metrics.jaccard, self.manual_score),
+            "pearson_jaccard_manual": pearsonr(self.metrics.jaccard, self.manual_score)
+        })
 
     def run(self):
         self.find_spearman_correlation_with_metrics()

@@ -1,8 +1,6 @@
-import io
 import os
 import zipfile
 
-import requests
 import gdown
 
 
