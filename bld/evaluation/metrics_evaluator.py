@@ -89,7 +89,7 @@ class MetricsEvaluator:
         return hausdorff_distance, dice_coefficient, jaccard_index
 
     def evaluate(self):
-        for i in range(self.mask_t_np.shape[0]):
+        for i in range(self.mask_t.GetSize()[0]):
             print(i, ":")
             points_ref = self.dl.c_ref['slice' + str(i)]
             points_test = self.dl.c_test['slice' + str(i)]
