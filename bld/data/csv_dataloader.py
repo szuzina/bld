@@ -12,6 +12,7 @@ class CSVDataLoader:
 
         self.csv_data_id = csv_data_id
         self.root_folder = root_folder
+        self.p_number = p_number
         
         self.data = self.upload_csv_dir()
 
