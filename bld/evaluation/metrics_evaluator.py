@@ -89,7 +89,11 @@ class MetricsEvaluator:
         return hausdorff_distance, dice_coefficient, jaccard_index
 
     def evaluate(self):
-        for i in range(self.mask_t.GetSize()[0]):
+
+        num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')]) # Get number of slices available in c_ref
+        num_slices = min(self.mask_t.GetSize()[0], num_slices_ref) #Use minimum to avoid exceeding available slices
+        
+        for i in range(num_slices):
             print(i, ":")
             points_ref = self.dl.c_ref['slice' + str(i)]
             points_test = self.dl.c_test['slice' + str(i)]
