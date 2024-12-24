@@ -12,8 +12,6 @@ class CSVDataLoader:
 
         self.root_folder = root_folder
         self.p_number = p_number
-        
-        self.data = self.upload_csv_dir()
 
         self.patient_data = self.find_patient_data()
         self.filtered_scores = self.find_filtered_scores(filtered_rows=idx)
