@@ -21,7 +21,7 @@ class CSVDataLoader:
 
     def find_patient_data(self):
 
-        csv_directory = self.root_folder + '/bld/data/csv_dir'
+        csv_directory = self.root_folder + '/bld/bld/data/csv_dir'
         patient_path = csv_directory + f'/patient{self.p_number}.csv'
         df = pd.read_csv(patient_path, header=None, sep=';')
 
