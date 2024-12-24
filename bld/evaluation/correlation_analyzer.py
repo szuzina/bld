@@ -22,27 +22,21 @@ class CorrelationAnalyzer:
 
     def find_spearman_correlation_with_metrics(self):
         """Find the Spearman correlation between the median and the other metrics."""
-        correlation_1_2 = spearmanr(self.median, self.metrics.hausdorff)
-        correlation_1_3 = spearmanr(self.median, self.metrics.dice)
-        correlation_1_4 = spearmanr(self.median, self.metrics.jaccard)
-        correlation_1_5 = spearmanr(self.median, self.manual_score)
-
-        self.results["spearman_msi_hausdorff"] = correlation_1_2
-        self.results["spearman_msi_dice"] = correlation_1_3
-        self.results["spearman_msi_jaccard"] = correlation_1_4
-        self.results["spearman_msi_manual"] = correlation_1_5
+        self.results.update({
+            "spearman_msi_hausdorff": spearmanr(self.median, self.metrics.hausdorff),
+            "spearman_msi_dice": spearmanr(self.median, self.metrics.dice),
+            "spearman_msi_jaccard": spearmanr(self.median, self.metrics.jaccard),
+            "spearman_msi_manual": spearmanr(self.median, self.manual_score)
+        })
 
     def find_pearson_correlation_with_metrics(self):
         """Find the Pearson correlation between the median and traditional metrics."""
-        correlation_1_2 = pearsonr(self.median, self.metrics.hausdorff)
-        correlation_1_3 = pearsonr(self.median, self.metrics.dice)
-        correlation_1_4 = pearsonr(self.median, self.metrics.jaccard)
-        correlation_1_6 = pearsonr(self.median, self.manual_score)
-
-        self.results["pearson_msi_hausdorff"] = correlation_1_2
-        self.results["pearson_msi_dice"] = correlation_1_3
-        self.results["pearson_msi_jaccard"] = correlation_1_4
-        self.results["pearson_msi_manual"] = correlation_1_6
+        self.results.update({
+            "pearson_msi_hausdorff": pearsonr(self.median, self.metrics.hausdorff),
+            "pearson_msi_dice": pearsonr(self.median, self.metrics.dice),
+            "pearson_msi_jaccard": pearsonr(self.median, self.metrics.jaccard),
+            "pearson_msi_manual": pearsonr(self.median, self.manual_score)
+        })
 
     def find_spearman_pearson_traditional_with_manual_score(self):
         """Find both Spearman and Pearson correlations between a traditional metric and manual score."""
