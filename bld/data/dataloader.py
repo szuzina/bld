@@ -60,7 +60,7 @@ class DataLoader:
             c = []
             for contour in contours:
                 c.append(contour.T.squeeze())
-            dictionary_contours['slice' + str(i)] = c
+            dictionary_contours['slice' + str(i+1)] = c #slice indices will start from 1
         return dictionary_contours
 
 
