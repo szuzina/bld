@@ -94,9 +94,10 @@ class MetricsEvaluator:
         num_slices = min(self.mask_t.GetSize()[0], num_slices_ref) #Use minimum to avoid exceeding available slices
         
         for i in range(num_slices):
-            print(i, ":")
-            points_ref = self.dl.c_ref['slice' + str(i)]
-            points_test = self.dl.c_test['slice' + str(i)]
+            k = i+1 #the first slice is slice1
+            print(k, ":")
+            points_ref = self.dl.c_ref['slice' + str(k)]
+            points_test = self.dl.c_test['slice' + str(k)]
             e = self.check_contours_on_slice(test_points=points_test,
                                              ref_points=points_ref)
 
@@ -105,9 +106,9 @@ class MetricsEvaluator:
                 mask_t_slice_np = sitk.GetArrayViewFromImage(self.mask_t[i, :, :])
                 mask_r_slice_np = sitk.GetArrayViewFromImage(self.mask_r[i, :, :])
 
-                m = self.find_msi_for_one_slice(slice_index=i)
+                m = self.find_msi_for_one_slice(slice_index=k)
                 self.msindex.append(m)
-                self.idx.append(i)
+                self.idx.append(k)
 
                 hd, ds, ji = self.find_traditional_metrics(
                     mask_t_slice_np=mask_t_slice_np,
