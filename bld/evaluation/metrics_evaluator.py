@@ -94,7 +94,7 @@ class MetricsEvaluator:
         num_slices = min(self.mask_t.GetSize()[0], num_slices_ref) #Use minimum to avoid exceeding available slices
         
         for i in range(num_slices):
-            k = i+1 #the first slice is slice1
+            k = i
             print(k, ":")
             points_ref = self.dl.c_ref['slice' + str(k)]
             points_test = self.dl.c_test['slice' + str(k)]
