@@ -50,16 +50,11 @@ class MetricsEvaluator:
         return error
 
     def find_msi_for_one_slice(self, slice_index):
-        im_slice = 'slice' + str(slice_index)
-
-        il_const = self.il  # inside level
-        ol_const = self.ol  # outside level
-
-        points_ref = self.dl.c_ref[im_slice]
-        points_test = self.dl.c_test[im_slice]
+        points_ref = self.dl.c_ref['slice' + str(slice_index)]
+        points_test = self.dl.c_test['slice' + str(slice_index)]
 
         msi_calc = MSICalculator(
-            il=il_const, ol=ol_const,
+            il=self.il, ol=self.ol,
             ref_points=points_ref,
             test_points=points_test)
         msi_calc.run()
