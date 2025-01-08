@@ -7,10 +7,11 @@ from natsort import natsorted
 
 class DataLoader:
     def __init__(self, number, data_folder="data", root_folder="./"):
-        self.labels_test = None
-        self.labels_ref = None
         self.data_folder = data_folder
         self.root_folder = root_folder
+
+        self.labels_test: list = []
+        self.labels_ref: list = []
         self.get_the_labels()
 
         self.c_ref = self.get_contour_from_image(file_path=self.labels_ref[number - 1])
@@ -42,7 +43,7 @@ class DataLoader:
         im = sitk.ReadImage(file_path)
         img = sitk.GetArrayFromImage(im)
 
-        directory = self.root_folder + self.data_folder
+        # directory = self.root_folder + self.data_folder
         # os.chdir(directory)
 
         # initialize dictionary
