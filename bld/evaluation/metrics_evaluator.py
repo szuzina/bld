@@ -35,17 +35,17 @@ class MetricsEvaluator:
     @staticmethod
     def check_contours_on_slice(test_points, ref_points):
         if len(test_points) != len(ref_points) or len(test_points) == 0 or len(ref_points) == 0:
-            print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
+            #print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
             error = True
         else:
             # Check if each array within test_points and ref_points is 2D
             for test_contour, ref_contour in zip(test_points, ref_points):
                 if test_contour.ndim != 2 or ref_contour.ndim != 2:
-                    print("At least one contour is not 2D. The slice should be evaluated manually.")
+                    #print("At least one contour is not 2D. The slice should be evaluated manually.")
                     error = True
                     return error  # Return immediately if an error is found
 
-            print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
+            #print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
             error = False
         return error
 
@@ -59,8 +59,6 @@ class MetricsEvaluator:
             test_points=points_test)
         msi_calc.run()
 
-        print("MSI:", msi_calc.msi)
-
         return msi_calc.msi
 
     @staticmethod
@@ -69,7 +67,6 @@ class MetricsEvaluator:
         d1 = directed_hausdorff(mask_t_slice_np, mask_r_slice_np)[0]
         d2 = directed_hausdorff(mask_t_slice_np, mask_r_slice_np)[0]
         hausdorff_distance = max(d1, d2)
-        print("Hausdorff Distance:", hausdorff_distance)
 
         # Dice, Jaccard
         jaccard_index = jaccard_score(mask_t_slice_np.flatten(),
@@ -78,8 +75,6 @@ class MetricsEvaluator:
         dice_coefficient = f1_score(mask_t_slice_np.flatten(),
                                     mask_r_slice_np.flatten(),
                                     average='micro')
-        print("Dice Coefficient:", dice_coefficient)
-        print("Jaccard Index:", jaccard_index)
 
         return hausdorff_distance, dice_coefficient, jaccard_index
 
