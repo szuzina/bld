@@ -84,10 +84,8 @@ class MetricsEvaluator:
         num_slices = min(self.mask_t.GetSize()[0], num_slices_ref) #Use minimum to avoid exceeding available slices
         
         for i in range(num_slices):
-            k = i
-            print(k, ":")
-            points_ref = self.dl.c_ref['slice' + str(k)]
-            points_test = self.dl.c_test['slice' + str(k)]
+            points_ref = self.dl.c_ref['slice' + str(i)]
+            points_test = self.dl.c_test['slice' + str(i)]
             e = self.check_contours_on_slice(test_points=points_test,
                                              ref_points=points_ref)
 
