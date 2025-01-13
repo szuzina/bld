@@ -94,9 +94,9 @@ class MetricsEvaluator:
                 mask_t_slice_np = sitk.GetArrayViewFromImage(self.mask_t[i, :, :])
                 mask_r_slice_np = sitk.GetArrayViewFromImage(self.mask_r[i, :, :])
 
-                m = self.find_msi_for_one_slice(slice_index=k)
+                m = self.find_msi_for_one_slice(slice_index=i)
                 self.msindex.append(m)
-                self.idx.append(k)
+                self.idx.append(i)
 
                 hd, ds, ji = self.find_traditional_metrics(
                     mask_t_slice_np=mask_t_slice_np,
