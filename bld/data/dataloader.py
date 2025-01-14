@@ -72,7 +72,7 @@ class DataLoader:
 
 
 def check_contours_on_slice(test_points, ref_points):
-    if len(test_points) != len(ref_points):
-        print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
-    else:
-        print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
+    #if len(test_points) != len(ref_points):
+    #    print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
+    #else:
+    #    print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
