@@ -105,5 +105,5 @@ class MetricsEvaluator:
                 self.dice.append(ds)
                 self.jacc.append(ji)
 
-            else:
-                print("Reference or test slice is empty.")
+            #else:
+            #    print("Reference or test slice is empty.")
