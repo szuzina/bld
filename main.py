@@ -1,6 +1,6 @@
-from bld.data import DataDownloader
-from bld.data import DataLoader, check_contours_on_slice
-from bld.metrics import MSICalculator
+from bld.data.data_downloader import DataDownloader
+from bld.data.dataloader import DataLoader, check_contours_on_slice
+from bld.metrics.msi_calculator import MSICalculator
 
 
 def main():
