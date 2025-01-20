@@ -79,17 +79,17 @@ class MetricsEvaluator:
         return hausdorff_distance, dice_coefficient, jaccard_index
 
     def evaluate(self):
-
-        num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')]) # Get number of slices available in c_ref
-        num_slices = min(self.mask_t.GetSize()[0], num_slices_ref) #Use minimum to avoid exceeding available slices
+        num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')])
+        # Get number of slices available in c_ref
+        num_slices = min(self.mask_t.GetSize()[0], num_slices_ref)  # Use minimum to avoid exceeding available slices
         
         for i in range(num_slices):
             points_ref = self.dl.c_ref['slice' + str(i)]
             points_test = self.dl.c_test['slice' + str(i)]
-            e = self.check_contours_on_slice(test_points=points_test,
+            is_run_correctly = self.check_contours_on_slice(test_points=points_test,
                                              ref_points=points_ref)
 
-            if not e:  # there is no error while checking the contours
+            if not is_run_correctly:  # there is no error while checking the contours
 
                 mask_t_slice_np = sitk.GetArrayViewFromImage(self.mask_t[i, :, :])
                 mask_r_slice_np = sitk.GetArrayViewFromImage(self.mask_r[i, :, :])
@@ -104,6 +104,3 @@ class MetricsEvaluator:
                 self.haus.append(hd)
                 self.dice.append(ds)
                 self.jacc.append(ji)
-
-            #else:
-            #    print("Reference or test slice is empty.")

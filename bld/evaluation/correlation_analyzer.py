@@ -6,7 +6,7 @@ class CorrelationAnalyzer:
     def __init__(self, evaluation_metrics, manual_score):
         self.metrics = evaluation_metrics
         self.manual_score = manual_score
-        self.median = self.calculate_median()
+        self.median = []
 
         self.results = {}
 
@@ -14,11 +14,9 @@ class CorrelationAnalyzer:
         """Calculate the median for each element in the msi list."""
         median = []
         for i in range(len(self.metrics.msi)):
-            if len(self.metrics.msi[i]) > 1:
-                median.append(np.median(self.metrics.msi[i]))
-            else:
-                median.append(self.metrics.msi[i][0])
-        return median
+            median.append(np.median(self.metrics.msi[i]))
+        self.median=median
+        return 0
 
     def find_spearman_correlation_with_metrics(self):
         """Find the Spearman correlation between the median and the other metrics."""
@@ -50,6 +48,7 @@ class CorrelationAnalyzer:
         })
 
     def run(self):
+        self.calculate_median()
         self.find_spearman_correlation_with_metrics()
         self.find_pearson_correlation_with_metrics()
         self.find_spearman_pearson_traditional_with_manual_score()

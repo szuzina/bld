@@ -14,7 +14,7 @@ class DataDownloader:
         self.csv_data_id = csv_data_id
 
         self.download_files()
-        self.upload_csv_dir()
+        self.download_csv_dir()
 
     def download_files(self):
         """
@@ -34,7 +34,7 @@ class DataDownloader:
             
             return 0
 
-    def upload_csv_dir(self):
+    def download_csv_dir(self):
 
         drive_url = 'https://drive.google.com/uc?export=download&id='
         csv_directory_url = drive_url + self.csv_data_id
