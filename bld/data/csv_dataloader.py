@@ -8,7 +8,7 @@ import pandas as pd
 
 class CSVDataLoader:
 
-    def __init__(self, p_number, idx, root_folder='/content'):
+    def __init__(self, p_number, idx, root_folder='./'):
         self.root_folder = root_folder
         self.p_number = p_number
 
