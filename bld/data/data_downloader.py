@@ -40,7 +40,7 @@ class DataDownloader:
         csv_directory_url = drive_url + self.csv_data_id
 
         # download the csv directory
-        gdown.download(csv_directory_url, output=self.root_folder+'/bld/data/csv_zip', quiet=False)
-        with zipfile.ZipFile(self.root_folder + '/bld/data/csv_zip', 'r') as zip_ref:
-            zip_ref.extractall(self.root_folder + '/bld/data/csv_dir')
+        gdown.download(csv_directory_url, output=self.root_folder+'/data/csv_zip', quiet=False)
+        with zipfile.ZipFile(self.root_folder + '/data/csv_zip', 'r') as zip_ref:
+            zip_ref.extractall(self.root_folder + '/data/csv_dir')
         return 0
