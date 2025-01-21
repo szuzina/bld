@@ -5,7 +5,8 @@ def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
     """
     Calculates descriptive parameters of the BLD.
       Parameters:
-          bld: list of BLD corresponding to the reference points
+          bmaxd: backward maximal distance
+          fmind: forward mininum distance
           bmaxd_indexek: the list of the indices of the point to which the BLD is calculated
           dt: Pandas Dataframe containing the pairwise distances between the test and reference points
       Returns:
@@ -29,7 +30,6 @@ def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
 
 
 def calculate_ldp(dt, loc, bld):
-    fmins = np.zeros((dt.shape[0],))
     fmins = dt.min(axis=1)
     fmins_signed = np.multiply(loc, fmins)
     diff = bld - fmins
