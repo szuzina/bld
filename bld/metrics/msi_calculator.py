@@ -3,8 +3,8 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-from bld.bld_calculator import BLDCalculator
-from bld.distance_calculator import DistanceCalculator
+from bld.metrics.bld_calculator import BLDCalculator
+from bld.metrics.distance_calculator import DistanceCalculator
 
 
 class MSICalculator:
@@ -40,9 +40,9 @@ class MSICalculator:
             indices.append(res.index(p))
 
         # check for duplicates
-        if check_duplicate(indices):
-            print("The ordering is not correct, there is duplicate in the list.")
-            print("This means that the COM of more than one reference contour has the same closest test COM.")
+        # if check_duplicate(indices):
+            # print("The ordering is not correct, there is duplicate in the list.")
+            # print("This means that the COM of more than one reference contour has the same closest test COM.")
 
         return test_points_in_order
 

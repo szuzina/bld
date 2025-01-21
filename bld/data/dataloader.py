@@ -1,18 +1,24 @@
 import glob
 
-import SimpleITK as sitk
 import cv2 as cv
 from natsort import natsorted
+import SimpleITK as sitk
 
 
 class DataLoader:
     def __init__(self, number, data_folder="data", root_folder="./"):
-        self.labels_test = None
-        self.labels_ref = None
         self.data_folder = data_folder
         self.root_folder = root_folder
-        self.get_the_labels()
 
+        self.labels_test: list = []
+        self.labels_ref: list = []
+        self.c_ref: dict = dict()
+        self.c_test: dict = dict()
+
+        self.get_the_labels()
+        self.get_contours(number=number)
+
+    def get_contours(self, number):
         self.c_ref = self.get_contour_from_image(file_path=self.labels_ref[number - 1])
         self.c_test = self.get_contour_from_image(file_path=self.labels_test[number - 1])
 
@@ -36,13 +42,14 @@ class DataLoader:
         Returns:
           dictionary:
             keys - slice number
-            values - contours of the corresponding slice, each contour is one 2D numpy array with the coordinates of the contour points
+            values - contours of the corresponding slice, each contour is one 2D numpy array
+            with the coordinates of the contour points
         """
 
         im = sitk.ReadImage(file_path)
         img = sitk.GetArrayFromImage(im)
 
-        directory = self.root_folder + self.data_folder
+        # directory = self.root_folder + self.data_folder
         # os.chdir(directory)
 
         # initialize dictionary
@@ -62,10 +69,3 @@ class DataLoader:
                 c.append(contour.T.squeeze())
             dictionary_contours['slice' + str(i)] = c
         return dictionary_contours
-
-
-def check_contours_on_slice(test_points, ref_points):
-    if len(test_points) != len(ref_points):
-        print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
-    else:
-        print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
