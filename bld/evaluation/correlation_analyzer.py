@@ -15,7 +15,7 @@ class CorrelationAnalyzer:
         median = []
         for i in range(len(self.metrics.msi)):
             median.append(np.median(self.metrics.msi[i]))
-        self.median=median
+        self.median = median
         return 0
 
     def find_spearman_correlation_with_metrics(self):

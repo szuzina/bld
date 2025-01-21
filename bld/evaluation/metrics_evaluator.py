@@ -26,6 +26,11 @@ class MetricsEvaluator:
         self.mask_t_np = sitk.GetArrayViewFromImage(self.mask_t)
         self.mask_r_np = sitk.GetArrayViewFromImage(self.mask_r)
 
+        # Get number of slices available in c_ref
+        num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')])
+        self.num_slices = min(self.mask_t.GetSize()[0],
+                              num_slices_ref)  # Use minimum to avoid exceeding available slices
+
         self.msindex = []
         self.haus = []
         self.dice = []
@@ -35,17 +40,17 @@ class MetricsEvaluator:
     @staticmethod
     def check_contours_on_slice(test_points, ref_points):
         if len(test_points) != len(ref_points) or len(test_points) == 0 or len(ref_points) == 0:
-            #print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
+            # print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
             error = True
         else:
             # Check if each array within test_points and ref_points is 2D
             for test_contour, ref_contour in zip(test_points, ref_points):
                 if test_contour.ndim != 2 or ref_contour.ndim != 2:
-                    #print("At least one contour is not 2D. The slice should be evaluated manually.")
+                    # print("At least one contour is not 2D. The slice should be evaluated manually.")
                     error = True
                     return error  # Return immediately if an error is found
 
-            #print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
+            # print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
             error = False
         return error
 
@@ -79,15 +84,12 @@ class MetricsEvaluator:
         return hausdorff_distance, dice_coefficient, jaccard_index
 
     def evaluate(self):
-        num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')])
-        # Get number of slices available in c_ref
-        num_slices = min(self.mask_t.GetSize()[0], num_slices_ref)  # Use minimum to avoid exceeding available slices
-        
-        for i in range(num_slices):
+        for i in range(self.num_slices):
             points_ref = self.dl.c_ref['slice' + str(i)]
             points_test = self.dl.c_test['slice' + str(i)]
-            is_run_correctly = self.check_contours_on_slice(test_points=points_test,
-                                             ref_points=points_ref)
+            is_run_correctly = self.check_contours_on_slice(
+                test_points=points_test,
+                ref_points=points_ref)
 
             if not is_run_correctly:  # there is no error while checking the contours
 
