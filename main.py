@@ -1,13 +1,14 @@
 from bld.data.data_downloader import DataDownloader
-from bld.data.dataloader import DataLoader, check_contours_on_slice
+from bld.data.dataloader import DataLoader
 from bld.metrics.msi_calculator import MSICalculator
 
 
 def main():
     folder_url_ref = 'https://drive.google.com/uc?export=download&id=1Rw-MatnpUFDucEkEAZDbmAo_nSaOUD4T'
     folder_url_test = 'https://drive.google.com/uc?export=download&id=1hjiy-CBrHN1Gr2pGUJ8hnVwm-3TwUVWI'
+    csv_link = '1QFFfHTOHFNj2HEjX0XKbRwbB4ylw70ni'
 
-    DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test,
+    DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test, csv_data_id=csv_link,
                    data_folder="data")
 
     number = 1
@@ -16,8 +17,6 @@ def main():
     im_slice = 'slice100'
     points_ref = dl.c_ref[im_slice]
     points_test = dl.c_test[im_slice]
-    check_contours_on_slice(test_points=points_test,
-                            ref_points=points_ref)
 
     IL_CONST = 1
     OL_CONST = 1
