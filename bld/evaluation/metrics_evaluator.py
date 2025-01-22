@@ -1,6 +1,7 @@
 import glob
 
 from natsort import natsorted
+import numpy as np
 from scipy.spatial.distance import cdist
 import SimpleITK as sitk
 
