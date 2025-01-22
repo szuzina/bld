@@ -1,9 +1,8 @@
 import glob
 
 from natsort import natsorted
-from scipy.spatial.distance import directed_hausdorff
+from scipy.spatial.distance import cdist
 import SimpleITK as sitk
-from sklearn.metrics import jaccard_score, f1_score
 
 from bld.data.dataloader import DataLoader
 from bld.metrics.msi_calculator import MSICalculator
