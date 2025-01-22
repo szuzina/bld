@@ -68,18 +68,9 @@ class MetricsEvaluator:
 
     @staticmethod
     def find_traditional_metrics(mask_t_slice_np, mask_r_slice_np):
-        # Hausdorff
-        d1 = directed_hausdorff(mask_t_slice_np, mask_r_slice_np)[0]
-        d2 = directed_hausdorff(mask_t_slice_np, mask_r_slice_np)[0]
-        hausdorff_distance = max(d1, d2)
-
-        # Dice, Jaccard
-        jaccard_index = jaccard_score(mask_t_slice_np.flatten(),
-                                      mask_r_slice_np.flatten(),
-                                      average='micro')
-        dice_coefficient = f1_score(mask_t_slice_np.flatten(),
-                                    mask_r_slice_np.flatten(),
-                                    average='micro')
+        hausdorff_distance = find_hausdorff(mask_t_slice_np, mask_r_slice_np)
+        jaccard_index = find_jaccard(mask_t_slice_np, mask_r_slice_np)
+        dice_coefficient = find_dice(mask_t_slice_np, mask_r_slice_np)
 
         return hausdorff_distance, dice_coefficient, jaccard_index
 
@@ -106,3 +97,29 @@ class MetricsEvaluator:
                 self.haus.append(hd)
                 self.dice.append(ds)
                 self.jacc.append(ji)
+
+def find_jaccard(array1, array2):
+    binary_array1 = np.where(array1 != 0, 1, 0)
+    binary_array2 = np.where(array2 != 0, 1, 0)
+    intersection = np.logical_and(binary_array1, binary_array2)
+    union = np.logical_or(binary_array1, binary_array2)
+    jaccard_index = np.sum(intersection) / np.sum(union)
+    return jaccard_index
+
+def find_dice(array1, array2):
+    binary_array1 = np.where(array1 != 0, 1, 0)
+    binary_array2 = np.where(array2 != 0, 1, 0)
+    intersection = np.logical_and(binary_array1, binary_array2)
+    dice_index = 2 * np.sum(intersection) / (np.sum(binary_array1) + np.sum(binary_array2))
+    return dice_index
+
+def find_hausdorff(array1, array2):
+    binary_array1 = np.where(array1 != 0, 1, 0)
+    binary_array2 = np.where(array2 != 0, 1, 0)
+    coords1 = np.argwhere(binary_array1 == 1)
+    coords2 = np.argwhere(binary_array2 == 1)
+    distances = cdist(coords1, coords2)
+    hausdorff_AB = np.max(np.min(distances, axis=1))
+    hausdorff_BA = np.max(np.min(distances, axis=0))
+    hausdorff_distance = max(hausdorff_AB, hausdorff_BA)
+    return hausdorff_distance
