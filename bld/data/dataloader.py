@@ -69,10 +69,3 @@ class DataLoader:
                 c.append(contour.T.squeeze())
             dictionary_contours['slice' + str(i)] = c
         return dictionary_contours
-
-
-def check_contours_on_slice(test_points, ref_points):
-    if len(test_points) != len(ref_points):
-        print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
-    else:
-        print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
