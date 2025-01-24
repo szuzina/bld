@@ -1,3 +1,3 @@
-from analysis import calculate_ldp, calculate_bld_distribution
-from correlation_analyzer import CorrelationAnalyzer
-from metrics_evaluator import MetricsEvaluator
+from .analysis import calculate_ldp, calculate_bld_distribution
+from .correlation_analyzer import CorrelationAnalyzer
+from .metrics_evaluator import MetricsEvaluator
