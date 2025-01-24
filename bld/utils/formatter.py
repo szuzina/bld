@@ -24,12 +24,12 @@ class Formatter:
         # the closest point to Pref0 will be in the first column
         # based on FminD
   
-        sor_min_indexek = np.argmin(df.values, axis=1)
-        oszlop_min_indexek = np.argmin(df.values, axis=0)
+        row_min_indices = np.argmin(df.values, axis=1)
+        column_min_indices = np.argmin(df.values, axis=0)
 
-        df_atrendezett = df[[df.columns[i] for i in sor_min_indexek]]
+        df_rearranged = df[[df.columns[i] for i in row_min_indices]]
 
-        diff_sor = np.diff(sor_min_indexek)
-        diff_oszlop = np.diff(oszlop_min_indexek)
+        diff_row = np.diff(row_min_indices)
+        diff_column = np.diff(column_min_indices)
 
-        return df_atrendezett, diff_sor, diff_oszlop
+        return df_rearranged, diff_row, diff_column

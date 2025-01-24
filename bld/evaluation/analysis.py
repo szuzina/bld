@@ -15,7 +15,7 @@ def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
                 (instead of FMinD)
           bmd_length: the number of different BMaxD values from which the maximal is chosen
   """
-    number_of_points_BMaxD_is_bigger_than_FMinD = \
+    number_of_points_bmaxd_is_bigger_than_fmind = \
         bmaxd_indexek[fmind - bmaxd < 0].shape[0]
 
     # how many different point has the same BMaxD value, corresponding to one reference point?
@@ -26,11 +26,12 @@ def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
         bmd.append(r)
         bmd_length[i] = len(r)
 
-    return number_of_points_BMaxD_is_bigger_than_FMinD, bmd_length
+    return number_of_points_bmaxd_is_bigger_than_fmind, bmd_length
 
 
 def calculate_ldp(dt, loc, bld):
     fmins = dt.min(axis=1)
     fmins_signed = np.multiply(loc, fmins)
     diff = bld - fmins
+
     return fmins_signed, diff

@@ -39,11 +39,6 @@ class MSICalculator:
             test_points_in_order.append(self.test_points[res.index(p)])
             indices.append(res.index(p))
 
-        # check for duplicates
-        # if check_duplicate(indices):
-            # print("The ordering is not correct, there is duplicate in the list.")
-            # print("This means that the COM of more than one reference contour has the same closest test COM.")
-
         return test_points_in_order
 
     def run(self):
@@ -89,6 +84,7 @@ class MSICalculator:
         msi = 1 / len(final_bld) * (
                 mcf_inside['WF value'].sum() + mcf_outside['WF value'].sum()
         )
+
         return msi
 
     @staticmethod
@@ -103,6 +99,7 @@ class MSICalculator:
         wf: the value of the weight function
         """
         wf = np.exp(-d ** 2 / (2 * (10 / l) ** 2))
+
         return wf
 
 
@@ -112,6 +109,7 @@ def check_duplicate(items):
         if item in hash_bucket:
             return True
         hash_bucket.add(item)
+
     return False
 
 
