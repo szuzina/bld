@@ -12,7 +12,7 @@ def main():
                    data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
-    number = 1
+    number = 2
     # select the current slice (first slice: slice0)
     im_slice = 'slice100'
     # define the penalty values for MSI

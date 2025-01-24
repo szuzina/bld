@@ -37,8 +37,8 @@ class DataLoader:
         labels_test: the labels of the test files
         """
         folder = os.path.join(self.root_folder, self.data_folder)
-        self.labels_test = natsorted(glob.glob(os.path.join(folder, "masks_test/*")))
-        self.labels_ref = natsorted(glob.glob(os.path.join(folder, "masks_ref/*")))
+        self.labels_test = natsorted(glob.glob(os.path.join(folder, "masks_test", "*")))
+        self.labels_ref = natsorted(glob.glob(os.path.join(folder, "masks_ref", "*")))
 
     def get_contour_from_image(self, file_path):
         """

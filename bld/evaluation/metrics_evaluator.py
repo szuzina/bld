@@ -19,8 +19,8 @@ class MetricsEvaluator:
         self.ol = ol
 
         self.dl = DataLoader(data_folder=data_folder, number=patient, root_folder=root_folder)
-        labels_test = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "/masks_test/*")))
-        labels_ref = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "/masks_ref/*")))
+        labels_test = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_test/*")))
+        labels_ref = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_ref/*")))
 
         self.mask_t = sitk.ReadImage(labels_test[patient - 1])
         self.mask_r = sitk.ReadImage(labels_ref[patient - 1])
