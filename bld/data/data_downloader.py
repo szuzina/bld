@@ -37,7 +37,7 @@ class DataDownloader:
     def download_csv_dir(self):
 
         drive_url = 'https://drive.google.com/uc?export=download&id='
-        csv_directory_url = os.path.join(drive_url, self.csv_data_id)
+        csv_directory_url = drive_url + self.csv_data_id
 
         # download the csv directory
         gdown.download(csv_directory_url, output=os.path.join(self.root_folder, 'data/csv_zip'), quiet=False)
