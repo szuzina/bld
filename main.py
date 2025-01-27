@@ -2,6 +2,13 @@ from bld.data.data_downloader import DataDownloader
 from bld.data.dataloader import DataLoader
 from bld.metrics.msi_calculator import MSICalculator
 
+from bld.evaluation.metrics_evaluator import MetricsEvaluator
+from bld.data.csv_dataloader import CSVDataLoader
+from bld.metrics.evaluation_metrics import EvaluationMetrics
+from bld.evaluation.correlation_analyzer import CorrelationAnalyzer
+
+import pprint
+
 
 def main():
     folder_url_ref = 'https://drive.google.com/uc?export=download&id=1u2CMExEtQSi1iMclEdlr84YkgY-fd2C-'
@@ -33,6 +40,41 @@ def main():
     msi_calc.run()
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
+
+
+    CONST = 40
+
+    d = {}
+
+    for i in range(1, CONST + 1, 1):
+        evaluator = MetricsEvaluator(patient=i, il=1, ol=1)
+        print(f"patient {i} is done")
+        evaluator.evaluate()
+        csvdl = CSVDataLoader(
+            p_number=i,
+            idx=evaluator.idx,
+            root_folder='/content')
+
+        evmet = EvaluationMetrics(
+            msi=evaluator.msindex,
+            hausdorff=evaluator.haus,
+            dice=evaluator.dice,
+            jaccard=evaluator.jacc)
+
+        # Check if score has enough elements for correlation analysis
+        score = csvdl.filtered_scores
+        if len(score) >= 2 and len(score) == len(evaluator.msindex):
+            analyzer = CorrelationAnalyzer(
+                evaluation_metrics=evmet,
+                manual_score=score)
+            analyzer.run()
+
+            # save the data
+            d_ix = 'p' + str(i)
+            d[d_ix] = csvdl, evmet, analyzer, evaluator
+        else:
+            print(f"Skipping correlation analysis for patient {i} due to insufficient data points.")
+
 
 if __name__ == '__main__':
     main()

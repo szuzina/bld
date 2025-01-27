@@ -32,6 +32,8 @@ class MetricsEvaluator:
         self.num_slices = min(self.mask_t.GetSize()[0],
                               num_slices_ref)  # Use minimum to avoid exceeding available slices
 
+        self.msicalc = None
+
         self.msindex = []
         self.haus = []
         self.dice = []
@@ -61,12 +63,19 @@ class MetricsEvaluator:
             ref_points=points_ref,
             test_points=points_test)
         msi_calc.run()
+        self.msicalc = msi_calc
 
         return msi_calc.msi
 
-    @staticmethod
-    def find_traditional_metrics(mask_t_slice_np, mask_r_slice_np):
-        hausdorff_distance = find_hausdorff(mask_t_slice_np, mask_r_slice_np)
+
+    def find_traditional_metrics(self, mask_t_slice_np, mask_r_slice_np):
+        # hausdorff: calculate hausdorff distance for each contour
+        # the final hausdorff is the maximum of the contours' distances
+        distances = []
+        for r, t in zip(self.msicalc.ref_points, self.msicalc.test_points_in_order):
+            distances.append(find_hausdorff(coords1=r.T, coords2=t.T))
+        hausdorff_distance = max(distances)
+        # dice and jaccard is straighforward (one result for each slice)
         jaccard_index = find_jaccard(mask_t_slice_np, mask_r_slice_np)
         dice_coefficient = find_dice(mask_t_slice_np, mask_r_slice_np)
 
@@ -89,6 +98,7 @@ class MetricsEvaluator:
                 self.msindex.append(m)
                 self.idx.append(i)
 
+                # points_ref: 2 elemű lista, ami a 2 kontúrt jelöli
                 hd, ds, ji = self.find_traditional_metrics(
                     mask_t_slice_np=mask_t_slice_np,
                     mask_r_slice_np=mask_r_slice_np)
@@ -113,11 +123,7 @@ def find_dice(array1, array2):
 
     return dice_index
 
-def find_hausdorff(array1, array2):
-    binary_array1 = np.where(array1 != 0, 1, 0)
-    binary_array2 = np.where(array2 != 0, 1, 0)
-    coords1 = np.argwhere(binary_array1 == 1)
-    coords2 = np.argwhere(binary_array2 == 1)
+def find_hausdorff(coords1, coords2):
     distances = cdist(coords1, coords2)
     hausdorff_ab = np.max(np.min(distances, axis=1))
     hausdorff_ba = np.max(np.min(distances, axis=0))
