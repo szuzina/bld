@@ -24,8 +24,8 @@ class MetricsEvaluator:
 
         self.mask_t = sitk.ReadImage(labels_test[patient - 1])
         self.mask_r = sitk.ReadImage(labels_ref[patient - 1])
-        self.mask_t_np = sitk.GetArrayViewFromImage(self.mask_t)
-        self.mask_r_np = sitk.GetArrayViewFromImage(self.mask_r)
+        self.mask_t_np = sitk.GetArrayFromImage(self.mask_t)
+        self.mask_r_np = sitk.GetArrayFromImage(self.mask_r)
 
         # Get number of slices available in c_ref
         num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')])
