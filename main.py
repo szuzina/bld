@@ -27,7 +27,7 @@ def main():
     OL_CONST = 1 # outside level
 
     # load the data corresponding the selected patient
-    dl = DataLoader(data_folder="data", number=number, root_folder='./')
+    dl = DataLoader(data_folder="data", patient=number, root_folder='./')
 
     # get the contours from the images
     points_ref = dl.c_ref[im_slice]

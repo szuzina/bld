@@ -24,12 +24,25 @@ class DataDownloader:
         if not os.path.isdir(os.path.join(self.root_folder, self.data_folder)):
             os.makedirs(self.data_folder, exist_ok=True)
             
-            gdown.download(self.ref_url, output=os.path.join(self.root_folder, self.data_folder, "masks_ref.zip"), quiet=False)
-            gdown.download(self.test_url, output=os.path.join(self.root_folder, self.data_folder, "masks_test.zip"), quiet=False)
+            gdown.download(
+                self.ref_url,
+                output=os.path.join(self.root_folder, self.data_folder, "masks_ref.zip"),
+                quiet=False
+            )
+            gdown.download(
+                self.test_url,
+                output=os.path.join(self.root_folder, self.data_folder, "masks_test.zip"),
+                quiet=False
+            )
         
-            with zipfile.ZipFile(os.path.join(self.root_folder, self.data_folder, "masks_ref.zip"), 'r') as zip_ref:
-                zip_ref.extractall(os.path.join(self.root_folder, self.data_folder, "masks_ref"))
-            with zipfile.ZipFile(os.path.join(self.root_folder, self.data_folder, "masks_test.zip"), 'r') as zip_test:
+            with zipfile.ZipFile(
+                    os.path.join(self.root_folder, self.data_folder, "masks_ref.zip"),
+                    'r') as zip_ref:
+                zip_ref.extractall(
+                    os.path.join(self.root_folder, self.data_folder, "masks_ref"))
+            with (zipfile.ZipFile(
+                    os.path.join(self.root_folder, self.data_folder, "masks_test.zip"),
+                    'r') as zip_test):
                 zip_test.extractall(os.path.join(self.root_folder, self.data_folder, "masks_test"))
             
             return 0

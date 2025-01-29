@@ -133,7 +133,7 @@ class BLDCalculator:
         row_bld_indices = np.zeros(len(self.distance_df))
         for i in range(len(self.distance_df)):
             # we assign the pairs to the reference contour points
-           # Select the first index if np.argwhere returns a 2D array
+            # Select the first index if np.argwhere returns a 2D array
             idx = np.argwhere(self.distance_df.iloc[i].values == self.dist_bld[i])
             if idx.ndim > 1:
                 idx = idx[0]

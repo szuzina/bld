@@ -1,12 +1,5 @@
-import glob
-import os
-
-from natsort import natsorted
-import numpy as np
-from scipy.spatial.distance import cdist
-import SimpleITK as sitk
-
 from bld.data.dataloader import DataLoader
+from bld.evaluation.traditional_metrics import TraditionalMetricsCalculator
 from bld.metrics.msi_calculator import MSICalculator
 
 
@@ -18,27 +11,19 @@ class MetricsEvaluator:
         self.il = il
         self.ol = ol
 
-        self.dl = DataLoader(data_folder=data_folder, number=patient, root_folder=root_folder)
-        labels_test = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_test/*")))
-        labels_ref = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_ref/*")))
+        self.dl = DataLoader(data_folder=data_folder, patient=patient, root_folder=root_folder)
 
-        self.mask_t = sitk.ReadImage(labels_test[patient - 1])
-        self.mask_r = sitk.ReadImage(labels_ref[patient - 1])
-        self.mask_t_np = sitk.GetArrayFromImage(self.mask_t)
-        self.mask_r_np = sitk.GetArrayFromImage(self.mask_r)
-
-        # Get number of slices available in c_ref
+        # Get number of slices available
+        num_slices_test = len([key for key in self.dl.mask_test if key.startswith('slice')])
         num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')])
-        self.num_slices = min(self.mask_t.GetSize()[0],
+        self.num_slices = min(num_slices_test,
                               num_slices_ref)  # Use minimum to avoid exceeding available slices
 
-        self.msicalc = None
-
         self.msindex = []
-        self.haus = []
+        self.idx = []
         self.dice = []
         self.jacc = []
-        self.idx = []
+        self.haus = []
 
     @staticmethod
     def check_contours_on_slice(test_points, ref_points):
@@ -54,32 +39,25 @@ class MetricsEvaluator:
 
         return error
 
-    def find_msi_for_one_slice(self, slice_index):
-        points_ref = self.dl.c_ref['slice' + str(slice_index)]
-        points_test = self.dl.c_test['slice' + str(slice_index)]
-
+    def find_metrics_for_one_slice(self, slice_index):
+        slice_name = 'slice' + str(slice_index)
+        # Finding the MSI
+        points_ref = self.dl.c_ref[slice_name]
+        points_test = self.dl.c_test[slice_name]
         msi_calc = MSICalculator(
             il=self.il, ol=self.ol,
             ref_points=points_ref,
             test_points=points_test)
         msi_calc.run()
-        self.msicalc = msi_calc
 
-        return msi_calc.msi
+        # Finding the traditional metrics
+        trad_metrics_calc = TraditionalMetricsCalculator(
+                                msi_calc=msi_calc,
+                                slice_mask_ref=self.dl.mask_ref[slice_name],
+                                slice_mask_test=self.dl.mask_test[slice_name]
+        )
 
-
-    def find_traditional_metrics(self, mask_t_slice_np, mask_r_slice_np):
-        # hausdorff: calculate hausdorff distance for each contour
-        # the final hausdorff is the maximum of the contours' distances
-        distances = []
-        for r, t in zip(self.msicalc.ref_points, self.msicalc.test_points_in_order):
-            distances.append(find_hausdorff(coords1=r.T, coords2=t.T))
-        hausdorff_distance = max(distances)
-        # dice and jaccard is straighforward (one result for each slice)
-        jaccard_index = find_jaccard(mask_t_slice_np, mask_r_slice_np)
-        dice_coefficient = find_dice(mask_t_slice_np, mask_r_slice_np)
-
-        return hausdorff_distance, dice_coefficient, jaccard_index
+        return msi_calc.msi, trad_metrics_calc.dice, trad_metrics_calc.jaccard, trad_metrics_calc.hausdorff
 
     def evaluate(self):
         for i in range(self.num_slices):
@@ -90,43 +68,9 @@ class MetricsEvaluator:
                 ref_points=points_ref)
 
             if not is_run_correctly:  # there is no error while checking the contours
-
-                mask_t_slice_np = sitk.GetArrayViewFromImage(self.mask_t[i, :, :])
-                mask_r_slice_np = sitk.GetArrayViewFromImage(self.mask_r[i, :, :])
-
-                m = self.find_msi_for_one_slice(slice_index=i)
+                m, d, j, h = self.find_metrics_for_one_slice(slice_index=i)
                 self.msindex.append(m)
                 self.idx.append(i)
-
-                # points_ref: 2 elemű lista, ami a 2 kontúrt jelöli
-                hd, ds, ji = self.find_traditional_metrics(
-                    mask_t_slice_np=mask_t_slice_np,
-                    mask_r_slice_np=mask_r_slice_np)
-                self.haus.append(hd)
-                self.dice.append(ds)
-                self.jacc.append(ji)
-
-def find_jaccard(array1, array2):
-    binary_array1 = np.where(array1 != 0, 1, 0)
-    binary_array2 = np.where(array2 != 0, 1, 0)
-    intersection = np.logical_and(binary_array1, binary_array2)
-    union = np.logical_or(binary_array1, binary_array2)
-    jaccard_index = np.sum(intersection) / np.sum(union)
-
-    return jaccard_index
-
-def find_dice(array1, array2):
-    binary_array1 = np.where(array1 != 0, 1, 0)
-    binary_array2 = np.where(array2 != 0, 1, 0)
-    intersection = np.logical_and(binary_array1, binary_array2)
-    dice_index = 2 * np.sum(intersection) / (np.sum(binary_array1) + np.sum(binary_array2))
-
-    return dice_index
-
-def find_hausdorff(coords1, coords2):
-    distances = cdist(coords1, coords2)
-    hausdorff_ab = np.max(np.min(distances, axis=1))
-    hausdorff_ba = np.max(np.min(distances, axis=0))
-    hausdorff_distance = max(hausdorff_ab, hausdorff_ba)
-
-    return hausdorff_distance
+                self.haus.append(h)
+                self.dice.append(d)
+                self.jacc.append(j)

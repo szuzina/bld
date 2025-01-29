@@ -91,4 +91,3 @@ class MaskSplitter:
                         start = p1
 
         return end, start
-

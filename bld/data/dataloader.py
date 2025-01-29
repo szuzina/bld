@@ -3,13 +3,15 @@ import os
 
 import cv2 as cv
 from natsort import natsorted
-import SimpleITK as sitk
+import SimpleITK as SITK
 
 
 class DataLoader:
-    def __init__(self, number, data_folder="data", root_folder="./"):
+    def __init__(self, patient, data_folder="data", root_folder="./"):
         self.data_folder = data_folder
         self.root_folder = root_folder
+
+        self.patient = patient
 
         self.labels_test: list = []
         self.labels_ref: list = []
@@ -17,7 +19,11 @@ class DataLoader:
         self.c_test: dict = dict()
 
         self.get_the_labels()
-        self.get_contours(number=number)
+        self.get_contours(number=patient)
+
+        self.mask_test: dict = dict()
+        self.mask_ref: dict = dict()
+        self.get_masks()
 
     def get_contours(self, number):
         """
@@ -53,8 +59,8 @@ class DataLoader:
             with the coordinates of the contour points
         """
 
-        im = sitk.ReadImage(file_path)
-        img = sitk.GetArrayFromImage(im)
+        im = SITK.ReadImage(file_path)
+        img = SITK.GetArrayFromImage(im)
 
         # initialize dictionary
         dictionary_contours = dict()
@@ -74,3 +80,15 @@ class DataLoader:
             dictionary_contours['slice' + str(i)] = c
 
         return dictionary_contours
+
+    def get_masks(self):
+        labels_test = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_test/*")))
+        labels_ref = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_ref/*")))
+        mask_t = SITK.ReadImage(labels_test[self.patient - 1])
+        mask_r = SITK.ReadImage(labels_ref[self.patient - 1])
+        test = SITK.GetArrayFromImage(mask_t)
+        ref = SITK.GetArrayFromImage(mask_r)
+        number_of_slices = min(test.shape[0], ref.shape[0])
+        for i in range(number_of_slices):
+            self.mask_test['slice' + str(i)] = test[i, :, :]
+            self.mask_ref['slice' + str(i)] = ref[i, :, :]
