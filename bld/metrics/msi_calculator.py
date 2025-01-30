@@ -22,7 +22,7 @@ class MSICalculator:
         # we consider the closest center of mass
 
         def func_find_com(array):
-            if array.ndim == 1: # Check if the array is 1D
+            if array.ndim == 1:  # Check if the array is 1D
                 return array
             else:
                 com = array.mean(axis=1)
