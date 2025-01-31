@@ -1,11 +1,25 @@
 import os
+from typing import Optional
 import zipfile
 
 import gdown
 
 
 class DataDownloader:
-    def __init__(self, ref_url, test_url, csv_data_id, data_folder="data",
+    """Downloads all the necessary data from the cloud, including masks and manual scores.
+
+    Args:
+        ref_url: the link of the directory containing the reference masks.
+        test_url: the link of the directory containing the test masks.
+        csv_data_id: the link of the zip file containing the manual score csv files
+        data_folder: the folder which will be used for data storage
+        root_folder: the root folder
+
+    Returns:
+        download the files to the specified directory
+    """
+
+    def __init__(self, ref_url: str, test_url: str, csv_data_id: str, data_folder: Optional[str] = "data",
                  root_folder="./"):
         self.root_folder = root_folder
         self.data_folder = data_folder
@@ -18,7 +32,7 @@ class DataDownloader:
 
     def download_files(self):
         """
-        Upload all the currently available reference and test segmentations.
+        Download all the currently available reference and test segmentations.
         Create a folder for the reference files (masks_ref) and test files (masks_test) in the data folder.
         """
         if not os.path.isdir(os.path.join(self.root_folder, self.data_folder)):
@@ -48,6 +62,12 @@ class DataDownloader:
             return 0
 
     def download_csv_dir(self):
+        """
+        Download the CSV directory containing the manual scores of the patients.
+
+        One csv file corresponds to one patient.
+        The CSV file contain the slice index in the first column, the manual score in the second column.
+        """
 
         drive_url = 'https://drive.google.com/uc?export=download&id='
         csv_directory_url = drive_url + self.csv_data_id

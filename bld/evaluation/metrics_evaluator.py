@@ -4,6 +4,26 @@ from bld.metrics.msi_calculator import MSICalculator
 
 
 class MetricsEvaluator:
+    """
+    Calculates the different metrics for all the image slices of one patient.
+
+    Args:
+        patient: patient number
+        data_folder: will be modified
+        root_folder: will be modified
+        il: inside penalty level value
+        ol: outside penalty level value
+
+    Returns:
+        dl: the DataLoader class for the selected patient which contains the patient data
+        num_slices: the number of slices
+        msindex: MSI values
+        idx: the slice indices for which MSI was calculated
+        dice: Dice index values
+        jacc: Jaccard index values
+        haus: Hausdorff distance values
+    """
+
     def __init__(self, patient, data_folder='data', root_folder='./', il=1, ol=1):
         self.patient = patient
         self.data_folder = data_folder
@@ -27,6 +47,9 @@ class MetricsEvaluator:
 
     @staticmethod
     def check_contours_on_slice(test_points, ref_points):
+        """
+        Check if the reference and test contours are compatible and have at least one element.
+        """
         if len(test_points) != len(ref_points) or len(test_points) == 0 or len(ref_points) == 0:
             error = True
         else:
@@ -40,6 +63,9 @@ class MetricsEvaluator:
         return error
 
     def find_metrics_for_one_slice(self, slice_index):
+        """
+        Calculate MSI and traditional metrics for one image slice.
+        """
         slice_name = 'slice' + str(slice_index)
         # Finding the MSI
         points_ref = self.dl.c_ref[slice_name]
@@ -60,6 +86,9 @@ class MetricsEvaluator:
         return msi_calc.msi, trad_metrics_calc.dice, trad_metrics_calc.jaccard, trad_metrics_calc.hausdorff
 
     def evaluate(self):
+        """
+        Calculate the metrics for all image slices.
+        """
         for i in range(self.num_slices):
             points_ref = self.dl.c_ref['slice' + str(i)]
             points_test = self.dl.c_test['slice' + str(i)]

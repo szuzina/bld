@@ -3,6 +3,18 @@ import pandas as pd
 
 
 class DistanceCalculator:
+    """
+    Calculates the pairwise distances between reference and test contour points.
+
+    Args:
+        reference_contour: the np array of the reference contour points (coordinates)
+        test_contour: the np array of the test contour points (coordinates)
+
+    Returns:
+        pairwise_distances: the Euclidean distance between the reference and test contour points
+        distance_table: table of the pairwise distances
+    """
+
     def __init__(self, reference_contour, test_contour):
         self.reference_contour = reference_contour
         self.test_contour = test_contour
@@ -36,6 +48,7 @@ class DistanceCalculator:
         the columns correspond to the test points.
         Each cell contains the Euclidean distance between the two points of the row index and column index.
         """
+
         cols = []
         for i in range(len(self.pairwise_distance[0, :])):
             cols.append('Ptest' + str(i))

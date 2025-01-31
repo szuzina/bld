@@ -3,6 +3,17 @@ from scipy.stats import spearmanr, pearsonr
 
 
 class CorrelationAnalyzer:
+    """
+    Calculate the correlation between manual scores, MSI and traditional metrics.
+
+    Args:
+        evaluation_metrics:
+        manual_score: manual scores loaded previously
+
+    Returns:
+         results: dictionary with the correlation values
+    """
+
     def __init__(self, evaluation_metrics, manual_score):
         self.metrics = evaluation_metrics
         self.manual_score = manual_score

@@ -8,6 +8,19 @@ from bld.metrics.distance_calculator import DistanceCalculator
 
 
 class MSICalculator:
+    """
+    Calculates the MSI values for all slices corresponding to a patient.
+
+    Args:
+        il: inside penalty level
+        ol: outside penalty level
+        test_points: the test points array (coordinates)
+        ref_points: the reference points array (coordinates)
+
+    Returns:
+        msi: the calculated MSI values
+
+    """
     def __init__(self, il, ol, test_points, ref_points):
         self.test_points = test_points
         self.ref_points = ref_points
@@ -18,8 +31,9 @@ class MSICalculator:
         self.msi = []
 
     def pair_contours(self):
-        # pair the test and reference contours on a slice
-        # we consider the closest center of mass
+        """
+        Pair the test and reference contours on a slice based on the closest center of mass
+        """
 
         def func_find_com(array):
             if array.ndim == 1:  # Check if the array is 1D
@@ -46,6 +60,9 @@ class MSICalculator:
             self.msi.append(self.run_for_single_contour(r=r, t=t))
 
     def run_for_single_contour(self, r, t):
+        """
+        Calculate MSI for a single contour.
+        """
         test_contour = t
         reference_contour = r
 
@@ -66,12 +83,6 @@ class MSICalculator:
     def calculate_msi(self, final_bld):
         """
         Calculates the value of MSI for the current slice.
-        Parameters:
-        final_bld: numpy array with the final values of BLD
-        il: the user-defined inside level value
-        ol: the user-defined outside level value
-        Returns:
-        msi: the value of MSI of the current slice
         """
         mcf_inside = pd.DataFrame(final_bld, columns=['corr.BLD'])
         mcf_outside = pd.DataFrame(final_bld, columns=['corr.BLD'])
@@ -92,18 +103,23 @@ class MSICalculator:
                         l: Union[float, pd.DataFrame]) -> Union[float, pd.DataFrame]:
         """
         Defines the weight function.
-        Parameters:
-        d: the distance for which we calculate the weight function
-        l: the level parameter of the weight function
+
+        Args:
+            d: the distance for which we calculate the weight function
+            l: the level parameter of the weight function
         Returns:
-        wf: the value of the weight function
+            wf: the value of the weight function
         """
+
         wf = np.exp(-d ** 2 / (2 * (10 / l) ** 2))
 
         return wf
 
 
 def check_duplicate(items):
+    """
+    Check if the pairing is not correct i.e. there is duplicate in the list.
+    """
     hash_bucket = set()
     for item in items:
         if item in hash_bucket:
@@ -116,7 +132,13 @@ def check_duplicate(items):
 def move_coms(c_ref, c_test):
     """
     Moves the test contour to align the center of mass with the COM of the reference contour.
-    Returns: the moved test contour.
+
+    Args:
+        c_ref: the reference contour points (coordinates)
+        c_test: the test contour points (coordinates)
+
+    Returns:
+        c_test_corrected: the moved test contour.
     """
 
     com_ref = c_ref.mean(axis=1)

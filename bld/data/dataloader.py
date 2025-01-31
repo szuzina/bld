@@ -7,6 +7,23 @@ import SimpleITK as SITK
 
 
 class DataLoader:
+    """
+    Load the data of a patient in the necessary format for further analysis.
+
+    Args:
+        patient: patient number
+        data_folder: will be removed
+        root_folder: will be removed
+
+    Returns:
+        labels_test: the labels (paths) of all the patient to the test contours
+        labels_ref: the labels (paths) of all the patient to the reference contours
+        c_ref: reference contours with coordinates
+        c_test: test contours with coordinates
+        mask_test: test masks in np arrays
+        mask_ref: reference masks in np arrays
+
+    """
     def __init__(self, patient, data_folder="data", root_folder="./"):
         self.data_folder = data_folder
         self.root_folder = root_folder
@@ -28,6 +45,10 @@ class DataLoader:
     def get_contours(self, number):
         """
         Finds the contours from one image slice.
+
+        Args:
+            number: patient number
+
         Returns:
             c_ref: the reference contour(s)
             c_test: the test contour(s)
@@ -38,6 +59,7 @@ class DataLoader:
     def get_the_labels(self):
         """
         Finds the labels of the uploaded files (folder name + file name).
+
         Returns:
         labels_ref: the labels of the reference files
         labels_test: the labels of the test files
@@ -50,8 +72,9 @@ class DataLoader:
         """
         Converts a nii.gz image to a list of contours.
 
-        Parameters:
+        Args:
             file_path (str): the path of the selected nii.gz image
+
         Returns:
           dictionary:
             keys - slice number
@@ -82,6 +105,9 @@ class DataLoader:
         return dictionary_contours
 
     def get_masks(self):
+        """
+        Creates a dictionary for a patient, contains the slice masks in np array.
+        """
         labels_test = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_test/*")))
         labels_ref = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_ref/*")))
         mask_t = SITK.ReadImage(labels_test[self.patient - 1])

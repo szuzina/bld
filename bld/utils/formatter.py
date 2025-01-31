@@ -2,6 +2,9 @@ import numpy as np
 
 
 class Formatter:
+    """
+    Format the distance table with colorings, etc.
+    """
 
     @staticmethod
     def color_red_font_minimum_in_a_column(column):

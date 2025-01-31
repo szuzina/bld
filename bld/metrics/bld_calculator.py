@@ -4,6 +4,23 @@ import pandas as pd
 
 
 class BLDCalculator:
+    """
+    Calculates the BLD and corresponding calculations.
+
+    Args:
+        dist_calc: DistanceCalculator class with the pairwise distances
+        test_points: the test point's numpy array
+
+    Returns:
+        visualization_data: contains bmaxd_indices, fmind and bmaxd, which are necessary for visualization
+        dist_bld: BLD values calculated after aligning the reference and test COMs
+        dist_bld_signed: signed BLD values (inside or outside location)
+        final_bld: numpy array of the BLD values calculated after moving back the test contour
+        location: 1 if the test point is inside, 0 if on the reference contour, -1 if outside
+        paired_test_points_moved_back: numpy array containing the test points
+            which are pairs of reference contour points based on BLD
+    """
+
     def __init__(self, dist_calc, test_points):
         self.distance_df = dist_calc.distance_table
         self.reference_points = dist_calc.reference_contour
@@ -25,13 +42,6 @@ class BLDCalculator:
     def calculate_bld(self):
         """
         Calculates the BLD to each reference point.
-        Parameters:
-        df: Pandas Dataframe with the pairwise distances
-        Returns:
-        bmaxd_indices: the index of the point to with the BLD is calculated
-        fmind: the FminD values for each reference point
-        bmaxd: the BMaxD values (where it exists)
-        bld: the BLD values for each reference point
         """
 
         # the columns correspond to the test points
@@ -82,14 +92,6 @@ class BLDCalculator:
     def calculate_signed_distances(self):
         """
         Finds if a test point is inside or outside the reference contour and gives signed BLD.
-        Parameters:
-        test_corrected: the moved test contour (the COM of the test contour is aligned with
-            the COM of the reference contour)
-        ref: the reference point numpy array
-        bld: list of the BLD values (in order of the reference point indices)
-        Returns:
-        loc: 1 if the test point is inside, 0 if on the reference contour, -1 if outside
-        bld_signed: the list of signed BLD distances
         """
 
         # polygon is a list of tuples representing the vertices of the polygon
@@ -117,19 +119,8 @@ class BLDCalculator:
     def calculate_corrected_bld(self):
         """
         Calculates the BLD distances after moving back the test contour to the original location.
-        Parameters:
-        df: Pandas Dataframe with the pairwise distances
-        bld: list of the BLD values (in order of the reference point indices)
-        loc: 1 if the test point is inside, 0 if on the reference contour, -1 if outside
-        ref: the reference point numpy array
-        test: the test point numpy array
-        test_corrected: the moved test contour (the COM of the test contour is aligned with
-            the COM of the reference contour)
-        Returns:
-        final_bld: numpy array of the BLD values calculated after moving back the test contour
-        paired_test_points_moved_back: numpy array containing the test points
-            which are paires of reference contour points based on BLD
         """
+
         row_bld_indices = np.zeros(len(self.distance_df))
         for i in range(len(self.distance_df)):
             # we assign the pairs to the reference contour points

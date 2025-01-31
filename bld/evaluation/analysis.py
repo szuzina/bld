@@ -30,6 +30,19 @@ def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
 
 
 def calculate_ldp(dt, loc, bld):
+    """
+    Calculates local distance profile.
+
+    Args:
+        dt: Pandas Dataframe containing the pairwise distances between the test and reference points
+        loc: the location of the test points compared to the reference contour (inside or outside:
+                1 if the test point is inside, 0 if on the reference contour, -1 if outside)
+        bld: list of the BLD values (in order of the reference point indices)
+
+    Returns:
+        fmins_signed: forward minimal distances, negative if outside, positive if inside the reference contour
+        diff: the difference between bld and signed forward minimal distances
+    """
     fmins = dt.min(axis=1)
     fmins_signed = np.multiply(loc, fmins)
     diff = bld - fmins

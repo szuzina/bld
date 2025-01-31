@@ -23,8 +23,8 @@ def main():
     # select the current slice (first slice: slice0)
     im_slice = 'slice100'
     # define the penalty values for MSI
-    IL_CONST = 1 # inside level
-    OL_CONST = 1 # outside level
+    IL_CONST = 1  # inside level
+    OL_CONST = 1  # outside level
 
     # load the data corresponding the selected patient
     dl = DataLoader(data_folder="data", patient=number, root_folder='./')
@@ -40,7 +40,6 @@ def main():
     msi_calc.run()
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
-
 
     CONST = 40
 
