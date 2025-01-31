@@ -20,7 +20,7 @@ class DataDownloader:
     """
 
     def __init__(self, ref_url: str, test_url: str, csv_data_id: str, data_folder: Optional[str] = "data",
-                 root_folder="./"):
+                 root_folder: Optional[str] = "./"):
         self.root_folder = root_folder
         self.data_folder = data_folder
         self.ref_url = ref_url
@@ -39,25 +39,26 @@ class DataDownloader:
             os.makedirs(self.data_folder, exist_ok=True)
             
             gdown.download(
-                self.ref_url,
+                url=self.ref_url,
                 output=os.path.join(self.root_folder, self.data_folder, "masks_ref.zip"),
                 quiet=False
             )
             gdown.download(
-                self.test_url,
+                url=self.test_url,
                 output=os.path.join(self.root_folder, self.data_folder, "masks_test.zip"),
                 quiet=False
             )
         
             with zipfile.ZipFile(
-                    os.path.join(self.root_folder, self.data_folder, "masks_ref.zip"),
-                    'r') as zip_ref:
+                    file=os.path.join(self.root_folder, self.data_folder, "masks_ref.zip"),
+                    mode='r') as zip_ref:
                 zip_ref.extractall(
-                    os.path.join(self.root_folder, self.data_folder, "masks_ref"))
+                    path=os.path.join(self.root_folder, self.data_folder, "masks_ref"))
             with (zipfile.ZipFile(
-                    os.path.join(self.root_folder, self.data_folder, "masks_test.zip"),
-                    'r') as zip_test):
-                zip_test.extractall(os.path.join(self.root_folder, self.data_folder, "masks_test"))
+                    file=os.path.join(self.root_folder, self.data_folder, "masks_test.zip"),
+                    mode='r') as zip_test):
+                zip_test.extractall(
+                    path=os.path.join(self.root_folder, self.data_folder, "masks_test"))
             
             return 0
 
@@ -73,7 +74,7 @@ class DataDownloader:
         csv_directory_url = drive_url + self.csv_data_id
 
         # download the csv directory
-        gdown.download(csv_directory_url, output=os.path.join(self.root_folder, 'data/csv_zip'), quiet=False)
-        with zipfile.ZipFile(os.path.join(self.root_folder, 'data/csv_zip'), 'r') as zip_ref:
-            zip_ref.extractall(os.path.join(self.root_folder, 'data/csv_dir'))
+        gdown.download(url=csv_directory_url, output=os.path.join(self.root_folder, 'data/csv_zip'), quiet=False)
+        with zipfile.ZipFile(file=os.path.join(self.root_folder, 'data/csv_zip'), mode='r') as zip_ref:
+            zip_ref.extractall(path=os.path.join(self.root_folder, 'data/csv_dir'))
         return 0

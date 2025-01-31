@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import pandas as pd
 
@@ -18,7 +19,7 @@ class CSVDataLoader:
 
     """
 
-    def __init__(self, p_number, idx, root_folder='./'):
+    def __init__(self, p_number: int, idx: list, root_folder: Optional[str] = "./"):
 
         self.root_folder = root_folder
         self.p_number = p_number
@@ -32,11 +33,11 @@ class CSVDataLoader:
         """
         csv_directory = 'data/csv_dir'
         patient_path = os.path.join(csv_directory, f'patient{self.p_number}.csv')
-        df = pd.read_csv(patient_path, header=None, sep=';')
+        df = pd.read_csv(filepath_or_buffer=patient_path, header=None, sep=';')
 
         return df
 
-    def find_filtered_scores(self, filtered_rows):
+    def find_filtered_scores(self, filtered_rows: list):
         """
         Filter the manual scores to have just the slices for which MSI was calculated.
 

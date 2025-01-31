@@ -21,14 +21,14 @@ class MSICalculator:
         msi: the calculated MSI values
 
     """
-    def __init__(self, il, ol, test_points, ref_points):
+    def __init__(self, il: float, ol: float, test_points: np.ndarray[int], ref_points: np.ndarray[int]):
         self.test_points = test_points
         self.ref_points = ref_points
         self.il = il
         self.ol = ol
 
         self.test_points_in_order = self.pair_contours()
-        self.msi = []
+        self.msi: list  = []
 
     def pair_contours(self):
         """
@@ -80,12 +80,12 @@ class MSICalculator:
 
         return msi
 
-    def calculate_msi(self, final_bld):
+    def calculate_msi(self, final_bld: list):
         """
         Calculates the value of MSI for the current slice.
         """
-        mcf_inside = pd.DataFrame(final_bld, columns=['corr.BLD'])
-        mcf_outside = pd.DataFrame(final_bld, columns=['corr.BLD'])
+        mcf_inside = pd.DataFrame(data=final_bld, columns=['corr.BLD'])
+        mcf_outside = pd.DataFrame(data=final_bld, columns=['corr.BLD'])
         mcf_inside['WF value'] = MSICalculator.weight_function(
             d=mcf_inside.loc[mcf_inside['corr.BLD'] < 0],
             l=self.il)
@@ -129,7 +129,7 @@ def check_duplicate(items):
     return False
 
 
-def move_coms(c_ref, c_test):
+def move_coms(c_ref: np.ndarray[int], c_test: np.ndarray[int]):
     """
     Moves the test contour to align the center of mass with the COM of the reference contour.
 

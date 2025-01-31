@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 
 class Formatter:
@@ -22,7 +23,7 @@ class Formatter:
         return [highlight if v == minimum_in_row else default for v in row]
 
     @staticmethod
-    def rearrange_table(df):
+    def rearrange_table(df: pd.DataFrame):
         # the closest point to Pref0 will be in the first column
         # the closest point to Pref0 will be in the first column
         # based on FminD

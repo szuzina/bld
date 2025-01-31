@@ -15,12 +15,12 @@ class DistanceCalculator:
         distance_table: table of the pairwise distances
     """
 
-    def __init__(self, reference_contour, test_contour):
+    def __init__(self, reference_contour: np.ndarray[int], test_contour: np.ndarray[int]):
         self.reference_contour = reference_contour
         self.test_contour = test_contour
 
-        self.pairwise_distance = None
-        self.distance_table = None
+        self.pairwise_distance: np.ndarray = np.array([], dtype=np.float64)
+        self.distance_table: pd.DataFrame = pd.DataFrame()
 
     def run(self):
         self.pairwise_distance = self.find_pairwise_dist()
@@ -57,6 +57,6 @@ class DistanceCalculator:
         for i in range(len(self.pairwise_distance[:, 0])):
             ind.append('Pref' + str(i))
 
-        df = pd.DataFrame(self.pairwise_distance, columns=cols, index=ind)
+        df = pd.DataFrame(data=self.pairwise_distance, columns=cols, index=ind)
 
         return df

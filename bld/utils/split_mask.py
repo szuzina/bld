@@ -17,8 +17,8 @@ class MaskSplitter:
 
     """
     def __init__(self, im_slice):
-        self.min_area = 50
-        self.max_dist_ratio = 0.5
+        self.min_area: float = 50
+        self.max_dist_ratio: float = 0.5
         self.slice = im_slice
         self.thresh = self.slice.copy().astype(np.uint8)
         self.splitted = self.thresh.copy()
@@ -32,7 +32,7 @@ class MaskSplitter:
         for contour in contours:
             self.run_for_one_contour(contour=contour)
 
-    def run_for_one_contour(self, contour):
+    def run_for_one_contour(self, contour: np.ndarray[int]):
         """
         Apply split for one contour (if necessary).
         """
@@ -54,7 +54,7 @@ class MaskSplitter:
             if defects is not None:
                 self.apply_split(contour=contour, defects=defects)
 
-    def apply_split(self, contour, defects):
+    def apply_split(self, contour: np.ndarray[int], defects: cv.convexityDefects):
         """
         Doing the splitting method.
         """
@@ -80,14 +80,14 @@ class MaskSplitter:
             # this means that the mask is a special case
             print('Special case, it should be evaluated manually.')
 
-    def filter_points(self, distances, far_points):
+    def filter_points(self, distances: np.ndarray, far_points):
         """
         Filter out the unnecessary convexity defect points.
 
         If the convexity defect point deviation from the convex hull is smaller than half of the longest one,
         we will not consider the point as a potential splitting point.
         """
-        points_filtered = []
+        points_filtered: list = []
         max_dist = np.max(distances)
         for j in range(len(distances)):
             if distances[j] / max_dist > self.max_dist_ratio:
@@ -95,7 +95,7 @@ class MaskSplitter:
         return points_filtered
 
     @staticmethod
-    def find_start_and_end_points(points_filtered, contour):
+    def find_start_and_end_points(points_filtered: list, contour: np.ndarray[int]):
         """
         Findig the star and end points of the splitting line.
         """

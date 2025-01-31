@@ -1,11 +1,11 @@
-from bld.data.data_downloader import DataDownloader
-from bld.data.dataloader import DataLoader
-from bld.metrics.msi_calculator import MSICalculator
+from bld.data import DataDownloader
+from bld.data import DataLoader
+from bld.metrics import MSICalculator
 
-from bld.evaluation.metrics_evaluator import MetricsEvaluator
-from bld.data.csv_dataloader import CSVDataLoader
-from bld.metrics.evaluation_metrics import EvaluationMetrics
-from bld.evaluation.correlation_analyzer import CorrelationAnalyzer
+from bld.evaluation import MetricsEvaluator
+from bld.data import CSVDataLoader
+from bld.metrics import EvaluationMetrics
+from bld.evaluation import CorrelationAnalyzer
 
 import pprint
 

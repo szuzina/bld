@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.stats import spearmanr, pearsonr
 
+from bld.metrics import EvaluationMetrics
+
 
 class CorrelationAnalyzer:
     """
@@ -14,7 +16,7 @@ class CorrelationAnalyzer:
          results: dictionary with the correlation values
     """
 
-    def __init__(self, evaluation_metrics, manual_score):
+    def __init__(self, evaluation_metrics: EvaluationMetrics, manual_score: list):
         self.metrics = evaluation_metrics
         self.manual_score = manual_score
         self.median = []

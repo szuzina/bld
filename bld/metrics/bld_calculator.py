@@ -2,6 +2,8 @@ import cv2 as cv
 import numpy as np
 import pandas as pd
 
+# from bld.metrics import DistanceCalculator
+
 
 class BLDCalculator:
     """
@@ -21,18 +23,18 @@ class BLDCalculator:
             which are pairs of reference contour points based on BLD
     """
 
-    def __init__(self, dist_calc, test_points):
+    def __init__(self, dist_calc, test_points: np.ndarray[int]):
         self.distance_df = dist_calc.distance_table
         self.reference_points = dist_calc.reference_contour
         self.test_corrected_points = dist_calc.test_contour
         self.test_points = test_points
 
-        self.visualization_data = None
-        self.dist_bld = None
-        self.dist_bld_signed = None
-        self.final_bld = None
-        self.location = None
-        self.paired_test_points_moved_back = None
+        self.visualization_data: dict = dict()
+        self.dist_bld: list = []
+        self.dist_bld_signed: list = []
+        self.final_bld: list = []
+        self.location: list = []
+        self.paired_test_points_moved_back: np.ndarray = np.array([], dtype=np.int_)
 
     def run(self):
         self.calculate_bld()

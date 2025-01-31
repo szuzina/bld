@@ -1,7 +1,8 @@
 import numpy as np
+import pandas as pd
 
 
-def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
+def calculate_bld_distribution(bmaxd: list, fmind: list, bmaxd_indexek: list, dt: pd.DataFrame):
     """
     Calculates descriptive parameters of the BLD.
       Parameters:
@@ -29,7 +30,7 @@ def calculate_bld_distribution(bmaxd, fmind, bmaxd_indexek, dt):
     return number_of_points_bmaxd_is_bigger_than_fmind, bmd_length
 
 
-def calculate_ldp(dt, loc, bld):
+def calculate_ldp(dt: pd.DataFrame, loc: list, bld: list):
     """
     Calculates local distance profile.
 

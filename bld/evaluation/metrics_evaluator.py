@@ -1,3 +1,7 @@
+from typing import Optional
+
+import numpy as np
+
 from bld.data.dataloader import DataLoader
 from bld.evaluation.traditional_metrics import TraditionalMetricsCalculator
 from bld.metrics.msi_calculator import MSICalculator
@@ -24,7 +28,8 @@ class MetricsEvaluator:
         haus: Hausdorff distance values
     """
 
-    def __init__(self, patient, data_folder='data', root_folder='./', il=1, ol=1):
+    def __init__(self, patient: int, data_folder: Optional[str] = "data",
+                 root_folder: Optional[str] = "./", il: Optional[float] = 1, ol: Optional[float] = 1):
         self.patient = patient
         self.data_folder = data_folder
         self.root_folder = root_folder
@@ -39,14 +44,14 @@ class MetricsEvaluator:
         self.num_slices = min(num_slices_test,
                               num_slices_ref)  # Use minimum to avoid exceeding available slices
 
-        self.msindex = []
-        self.idx = []
-        self.dice = []
-        self.jacc = []
-        self.haus = []
+        self.msindex: list = []
+        self.idx: list = []
+        self.dice: list = []
+        self.jacc: list = []
+        self.haus: list = []
 
     @staticmethod
-    def check_contours_on_slice(test_points, ref_points):
+    def check_contours_on_slice(test_points: np.ndarray[int], ref_points: np.ndarray[int]):
         """
         Check if the reference and test contours are compatible and have at least one element.
         """
@@ -62,7 +67,7 @@ class MetricsEvaluator:
 
         return error
 
-    def find_metrics_for_one_slice(self, slice_index):
+    def find_metrics_for_one_slice(self, slice_index: int):
         """
         Calculate MSI and traditional metrics for one image slice.
         """

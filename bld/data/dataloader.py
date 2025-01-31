@@ -1,5 +1,6 @@
 import glob
 import os
+from typing import Optional
 
 import cv2 as cv
 from natsort import natsorted
@@ -24,7 +25,8 @@ class DataLoader:
         mask_ref: reference masks in np arrays
 
     """
-    def __init__(self, patient, data_folder="data", root_folder="./"):
+    def __init__(self, patient: int, data_folder: Optional[str] = "data",
+                 root_folder: Optional[str] = "./"):
         self.data_folder = data_folder
         self.root_folder = root_folder
 
@@ -42,7 +44,7 @@ class DataLoader:
         self.mask_ref: dict = dict()
         self.get_masks()
 
-    def get_contours(self, number):
+    def get_contours(self, number: int):
         """
         Finds the contours from one image slice.
 
@@ -68,12 +70,12 @@ class DataLoader:
         self.labels_test = natsorted(glob.glob(os.path.join(folder, "masks_test", "*")))
         self.labels_ref = natsorted(glob.glob(os.path.join(folder, "masks_ref", "*")))
 
-    def get_contour_from_image(self, file_path):
+    def get_contour_from_image(self, file_path: str):
         """
         Converts a nii.gz image to a list of contours.
 
         Args:
-            file_path (str): the path of the selected nii.gz image
+            file_path: the path of the selected nii.gz image
 
         Returns:
           dictionary:
@@ -82,8 +84,8 @@ class DataLoader:
             with the coordinates of the contour points
         """
 
-        im = SITK.ReadImage(file_path)
-        img = SITK.GetArrayFromImage(im)
+        im = SITK.ReadImage(fileName=file_path)
+        img = SITK.GetArrayFromImage(image=im)
 
         # initialize dictionary
         dictionary_contours = dict()
@@ -110,10 +112,10 @@ class DataLoader:
         """
         labels_test = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_test/*")))
         labels_ref = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_ref/*")))
-        mask_t = SITK.ReadImage(labels_test[self.patient - 1])
-        mask_r = SITK.ReadImage(labels_ref[self.patient - 1])
-        test = SITK.GetArrayFromImage(mask_t)
-        ref = SITK.GetArrayFromImage(mask_r)
+        mask_t = SITK.ReadImage(fileName=labels_test[self.patient - 1])
+        mask_r = SITK.ReadImage(fileName=labels_ref[self.patient - 1])
+        test = SITK.GetArrayFromImage(image=mask_t)
+        ref = SITK.GetArrayFromImage(image=mask_r)
         number_of_slices = min(test.shape[0], ref.shape[0])
         for i in range(number_of_slices):
             self.mask_test['slice' + str(i)] = test[i, :, :]
