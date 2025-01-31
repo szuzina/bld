@@ -28,7 +28,7 @@ class MSICalculator:
         self.ol = ol
 
         self.test_points_in_order = self.pair_contours()
-        self.msi: list  = []
+        self.msi: list = []
 
     def pair_contours(self):
         """

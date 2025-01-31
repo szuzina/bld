@@ -19,9 +19,9 @@ class CorrelationAnalyzer:
     def __init__(self, evaluation_metrics: EvaluationMetrics, manual_score: list):
         self.metrics = evaluation_metrics
         self.manual_score = manual_score
-        self.median = []
+        self.median: list = []
 
-        self.results = {}
+        self.results: dict = dict()
 
     def calculate_median(self):
         """Calculate the median for each element in the msi list."""
