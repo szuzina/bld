@@ -1,7 +1,8 @@
 import os
-from typing import Optional
 
 import pandas as pd
+
+from bld.data.data_downloader import DataDownloader
 
 
 class CSVDataLoader:
@@ -19,9 +20,9 @@ class CSVDataLoader:
 
     """
 
-    def __init__(self, p_number: int, idx: list, root_folder: Optional[str] = "./"):
+    def __init__(self, p_number: int, idx: list, datadownloader: DataDownloader):
 
-        self.root_folder = root_folder
+        self.folder = datadownloader.root_folder + datadownloader.data_folder
         self.p_number = p_number
 
         self.patient_data = self.find_patient_data()
@@ -31,7 +32,7 @@ class CSVDataLoader:
         """
         Load the csv data for the selected patient.
         """
-        csv_directory = 'data/csv_dir'
+        csv_directory = os.path.join(self.folder, 'csv_dir')
         patient_path = os.path.join(csv_directory, f'patient{self.p_number}.csv')
         df = pd.read_csv(filepath_or_buffer=patient_path, header=None, sep=';')
 

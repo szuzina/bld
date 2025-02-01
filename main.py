@@ -15,7 +15,7 @@ def main():
     folder_url_test = 'https://drive.google.com/uc?export=download&id=1U4o0AhgpF9RsS6nlGeJk8kvz2nDnVwmt'
     csv_link = '1QFFfHTOHFNj2HEjX0XKbRwbB4ylw70ni'
 
-    DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test, csv_data_id=csv_link,
+    ddl = DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test, csv_data_id=csv_link,
                    data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
@@ -27,7 +27,7 @@ def main():
     OL_CONST = 1  # outside level
 
     # load the data corresponding the selected patient
-    dl = DataLoader(data_folder="data", patient=number, root_folder='./')
+    dl = DataLoader(patient=number, datadownloader=ddl)
 
     # get the contours from the images
     points_ref = dl.c_ref[im_slice]
@@ -46,13 +46,13 @@ def main():
     d = {}
 
     for i in range(1, CONST + 1, 1):
-        evaluator = MetricsEvaluator(patient=i, il=1, ol=1)
+        evaluator = MetricsEvaluator(patient=i, datadownloader=ddl, il=1, ol=1)
         print(f"patient {i} is done")
         evaluator.evaluate()
         csvdl = CSVDataLoader(
             p_number=i,
             idx=evaluator.idx,
-            root_folder='/content')
+            datadownloader=ddl)
 
         evmet = EvaluationMetrics(
             msi=evaluator.msindex,

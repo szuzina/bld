@@ -6,6 +6,8 @@ import cv2 as cv
 from natsort import natsorted
 import SimpleITK as SITK
 
+from bld.data import DataDownloader
+
 
 class DataLoader:
     """
@@ -25,11 +27,8 @@ class DataLoader:
         mask_ref: reference masks in np arrays
 
     """
-    def __init__(self, patient: int, data_folder: Optional[str] = "data",
-                 root_folder: Optional[str] = "./"):
-        self.data_folder = data_folder
-        self.root_folder = root_folder
-
+    def __init__(self, patient: int, datadownloader: DataDownloader):
+        self.folder = datadownloader.root_folder + datadownloader.data_folder
         self.patient = patient
 
         self.labels_test: list = []
@@ -66,9 +65,8 @@ class DataLoader:
         labels_ref: the labels of the reference files
         labels_test: the labels of the test files
         """
-        folder = os.path.join(self.root_folder, self.data_folder)
-        self.labels_test = natsorted(glob.glob(os.path.join(folder, "masks_test", "*")))
-        self.labels_ref = natsorted(glob.glob(os.path.join(folder, "masks_ref", "*")))
+        self.labels_test = natsorted(glob.glob(os.path.join(self.folder, "masks_test", "*")))
+        self.labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_ref", "*")))
 
     def get_contour_from_image(self, file_path: str):
         """
@@ -91,7 +89,7 @@ class DataLoader:
         dictionary_contours = dict()
         # get the contours
         for i in range(img.shape[0]):
-            f_path = os.path.join(self.root_folder, self.data_folder, 'image.png')
+            f_path = os.path.join(self.folder, 'image.png')
             cv.imwrite(f_path, img[i] * 255)
             image = cv.imread(f_path)
             gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
@@ -110,8 +108,8 @@ class DataLoader:
         """
         Creates a dictionary for a patient, contains the slice masks in np array.
         """
-        labels_test = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_test/*")))
-        labels_ref = natsorted(glob.glob(os.path.join(self.root_folder, self.data_folder, "masks_ref/*")))
+        labels_test = natsorted(glob.glob(os.path.join(self.folder, "masks_test/*")))
+        labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_ref/*")))
         mask_t = SITK.ReadImage(fileName=labels_test[self.patient - 1])
         mask_r = SITK.ReadImage(fileName=labels_ref[self.patient - 1])
         test = SITK.GetArrayFromImage(image=mask_t)

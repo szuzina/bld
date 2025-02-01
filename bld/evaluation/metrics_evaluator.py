@@ -2,9 +2,10 @@ from typing import Optional
 
 import numpy as np
 
-from bld.data.dataloader import DataLoader
+from bld.data import DataLoader
+from bld.data import DataDownloader
 from bld.evaluation.traditional_metrics import TraditionalMetricsCalculator
-from bld.metrics.msi_calculator import MSICalculator
+from bld.metrics import MSICalculator
 
 
 class MetricsEvaluator:
@@ -28,15 +29,14 @@ class MetricsEvaluator:
         haus: Hausdorff distance values
     """
 
-    def __init__(self, patient: int, data_folder: Optional[str] = "data",
-                 root_folder: Optional[str] = "./", il: Optional[float] = 1, ol: Optional[float] = 1):
+    def __init__(self, patient: int, datadownloader: DataDownloader, il: Optional[float] = 1, ol: Optional[float] = 1):
         self.patient = patient
-        self.data_folder = data_folder
-        self.root_folder = root_folder
+
         self.il = il
         self.ol = ol
 
-        self.dl = DataLoader(data_folder=data_folder, patient=patient, root_folder=root_folder)
+        self.dl = DataLoader(patient=patient, datadownloader=datadownloader)
+        self.folder = self.dl.folder
 
         # Get number of slices available
         num_slices_test = len([key for key in self.dl.mask_test if key.startswith('slice')])
