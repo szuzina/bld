@@ -1,80 +1,100 @@
-import glob
+from typing import Optional
 
-from natsort import natsorted
 import numpy as np
-from scipy.spatial.distance import cdist
-import SimpleITK as sitk
 
-from bld.data.dataloader import DataLoader
-from bld.metrics.msi_calculator import MSICalculator
+from bld.data import DataLoader
+from bld.data import DataDownloader
+from bld.evaluation.traditional_metrics import TraditionalMetricsCalculator
+from bld.metrics import MSICalculator
 
 
 class MetricsEvaluator:
-    def __init__(self, patient, data_folder='data', root_folder='./', il=1, ol=1):
+    """
+    Calculates the different metrics for all the image slices of one patient.
+
+    Args:
+        patient: patient number
+        datadownloader: DataDownloader
+        il: inside penalty level value
+        ol: outside penalty level value
+
+    Returns:
+        dl: the DataLoader class for the selected patient which contains the patient data
+        num_slices: the number of slices
+        msindex: MSI values
+        idx: the slice indices for which MSI was calculated
+        dice: Dice index values
+        jacc: Jaccard index values
+        haus: Hausdorff distance values
+    """
+
+    def __init__(self, patient: int,
+                 datadownloader: DataDownloader,
+                 il: Optional[float] = 1, ol: Optional[float] = 1):
         self.patient = patient
-        self.data_folder = data_folder
-        self.root_folder = root_folder
+
         self.il = il
         self.ol = ol
 
-        self.dl = DataLoader(data_folder=data_folder, number=patient, root_folder=root_folder)
-        labels_test = natsorted(glob.glob(self.root_folder + self.data_folder + "/masks_test/*"))
-        labels_ref = natsorted(glob.glob(self.root_folder + self.data_folder + "/masks_ref/*"))
+        self.dl = DataLoader(patient=patient, datadownloader=datadownloader)
+        self.folder = self.dl.folder
 
-        self.mask_t = sitk.ReadImage(labels_test[patient - 1])
-        self.mask_r = sitk.ReadImage(labels_ref[patient - 1])
-        self.mask_t_np = sitk.GetArrayViewFromImage(self.mask_t)
-        self.mask_r_np = sitk.GetArrayViewFromImage(self.mask_r)
-
-        # Get number of slices available in c_ref
+        # Get number of slices available
+        num_slices_test = len([key for key in self.dl.mask_test if key.startswith('slice')])
         num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')])
-        self.num_slices = min(self.mask_t.GetSize()[0],
+        self.num_slices = min(num_slices_test,
                               num_slices_ref)  # Use minimum to avoid exceeding available slices
 
-        self.msindex = []
-        self.haus = []
-        self.dice = []
-        self.jacc = []
-        self.idx = []
+        self.msindex: list = []
+        self.idx: list = []
+        self.dice: list = []
+        self.jacc: list = []
+        self.haus: list = []
 
     @staticmethod
-    def check_contours_on_slice(test_points, ref_points):
+    def check_contours_on_slice(test_points: np.ndarray[int], ref_points: np.ndarray[int]):
+        """
+        Check if the reference and test contours are compatible and have at least one element.
+        """
         if len(test_points) != len(ref_points) or len(test_points) == 0 or len(ref_points) == 0:
-            # print("The number of test and reference contours are not equal. The slice should be evaluated manually.")
             error = True
         else:
             # Check if each array within test_points and ref_points is 2D
             for test_contour, ref_contour in zip(test_points, ref_points):
                 if test_contour.ndim != 2 or ref_contour.ndim != 2:
-                    # print("At least one contour is not 2D. The slice should be evaluated manually.")
                     error = True
                     return error  # Return immediately if an error is found
-
-            # print("The number of test and reference contours are equal. The automatic evaluation can be continued.")
             error = False
+
         return error
 
-    def find_msi_for_one_slice(self, slice_index):
-        points_ref = self.dl.c_ref['slice' + str(slice_index)]
-        points_test = self.dl.c_test['slice' + str(slice_index)]
-
+    def find_metrics_for_one_slice(self, slice_index: int):
+        """
+        Calculate MSI and traditional metrics for one image slice.
+        """
+        slice_name = 'slice' + str(slice_index)
+        # Finding the MSI
+        points_ref = self.dl.c_ref[slice_name]
+        points_test = self.dl.c_test[slice_name]
         msi_calc = MSICalculator(
             il=self.il, ol=self.ol,
             ref_points=points_ref,
             test_points=points_test)
         msi_calc.run()
 
-        return msi_calc.msi
+        # Finding the traditional metrics
+        trad_metrics_calc = TraditionalMetricsCalculator(
+                                msi_calc=msi_calc,
+                                slice_mask_ref=self.dl.mask_ref[slice_name],
+                                slice_mask_test=self.dl.mask_test[slice_name]
+        )
 
-    @staticmethod
-    def find_traditional_metrics(mask_t_slice_np, mask_r_slice_np):
-        hausdorff_distance = find_hausdorff(mask_t_slice_np, mask_r_slice_np)
-        jaccard_index = find_jaccard(mask_t_slice_np, mask_r_slice_np)
-        dice_coefficient = find_dice(mask_t_slice_np, mask_r_slice_np)
-
-        return hausdorff_distance, dice_coefficient, jaccard_index
+        return msi_calc.msi, trad_metrics_calc.dice, trad_metrics_calc.jaccard, trad_metrics_calc.hausdorff
 
     def evaluate(self):
+        """
+        Calculate the metrics for all image slices.
+        """
         for i in range(self.num_slices):
             points_ref = self.dl.c_ref['slice' + str(i)]
             points_test = self.dl.c_test['slice' + str(i)]
@@ -83,43 +103,9 @@ class MetricsEvaluator:
                 ref_points=points_ref)
 
             if not is_run_correctly:  # there is no error while checking the contours
-
-                mask_t_slice_np = sitk.GetArrayViewFromImage(self.mask_t[i, :, :])
-                mask_r_slice_np = sitk.GetArrayViewFromImage(self.mask_r[i, :, :])
-
-                m = self.find_msi_for_one_slice(slice_index=i)
+                m, d, j, h = self.find_metrics_for_one_slice(slice_index=i)
                 self.msindex.append(m)
                 self.idx.append(i)
-
-                hd, ds, ji = self.find_traditional_metrics(
-                    mask_t_slice_np=mask_t_slice_np,
-                    mask_r_slice_np=mask_r_slice_np)
-                self.haus.append(hd)
-                self.dice.append(ds)
-                self.jacc.append(ji)
-
-def find_jaccard(array1, array2):
-    binary_array1 = np.where(array1 != 0, 1, 0)
-    binary_array2 = np.where(array2 != 0, 1, 0)
-    intersection = np.logical_and(binary_array1, binary_array2)
-    union = np.logical_or(binary_array1, binary_array2)
-    jaccard_index = np.sum(intersection) / np.sum(union)
-    return jaccard_index
-
-def find_dice(array1, array2):
-    binary_array1 = np.where(array1 != 0, 1, 0)
-    binary_array2 = np.where(array2 != 0, 1, 0)
-    intersection = np.logical_and(binary_array1, binary_array2)
-    dice_index = 2 * np.sum(intersection) / (np.sum(binary_array1) + np.sum(binary_array2))
-    return dice_index
-
-def find_hausdorff(array1, array2):
-    binary_array1 = np.where(array1 != 0, 1, 0)
-    binary_array2 = np.where(array2 != 0, 1, 0)
-    coords1 = np.argwhere(binary_array1 == 1)
-    coords2 = np.argwhere(binary_array2 == 1)
-    distances = cdist(coords1, coords2)
-    hausdorff_AB = np.max(np.min(distances, axis=1))
-    hausdorff_BA = np.max(np.min(distances, axis=0))
-    hausdorff_distance = max(hausdorff_AB, hausdorff_BA)
-    return hausdorff_distance
+                self.haus.append(h)
+                self.dice.append(d)
+                self.jacc.append(j)

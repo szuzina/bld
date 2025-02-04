@@ -1,6 +1,8 @@
 class EvaluationMetrics:
-
-    def __init__(self, msi, hausdorff, dice, jaccard):
+    """
+    Storing the metrics data.
+    """
+    def __init__(self, msi: list, hausdorff: list, dice: list, jaccard: list):
         self.msi = msi
         self.hausdorff = hausdorff
         self.dice = dice

@@ -1,14 +1,27 @@
 import numpy as np
 from scipy.stats import spearmanr, pearsonr
 
+from bld.metrics import EvaluationMetrics
+
 
 class CorrelationAnalyzer:
-    def __init__(self, evaluation_metrics, manual_score):
+    """
+    Calculate the correlation between manual scores, MSI and traditional metrics.
+
+    Args:
+        evaluation_metrics:
+        manual_score: manual scores loaded previously
+
+    Returns:
+         results: dictionary with the correlation values
+    """
+
+    def __init__(self, evaluation_metrics: EvaluationMetrics, manual_score: list):
         self.metrics = evaluation_metrics
         self.manual_score = manual_score
-        self.median = []
+        self.median: list = []
 
-        self.results = {}
+        self.results: dict = dict()
 
     def calculate_median(self):
         """Calculate the median for each element in the msi list."""
