@@ -1,11 +1,6 @@
-from bld.data import DataDownloader
-from bld.data import DataLoader
-from bld.metrics import MSICalculator
-
-from bld.evaluation import MetricsEvaluator
-from bld.data import CSVDataLoader
-from bld.metrics import EvaluationMetrics
-from bld.evaluation import CorrelationAnalyzer
+from bld.data import DataDownloader, CSVDataLoader, DataLoader
+from bld.evaluation import MetricsEvaluator, CorrelationAnalyzer
+from bld.metrics import MSICalculator, EvaluationMetrics
 
 
 def main():
@@ -14,15 +9,15 @@ def main():
     csv_link = '1QFFfHTOHFNj2HEjX0XKbRwbB4ylw70ni'
 
     ddl = DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test, csv_data_id=csv_link,
-                   data_folder="data", root_folder='./')
+                         data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
     number = 2
     # select the current slice (first slice: slice0)
     im_slice = 'slice100'
     # define the penalty values for MSI
-    il_CONST = 1  # inside level
-    ol_CONST = 1  # outside level
+    il_const = 1  # inside level
+    ol_const = 1  # outside level
 
     # load the data corresponding the selected patient
     dl = DataLoader(patient=number, datadownloader=ddl)
@@ -33,7 +28,7 @@ def main():
 
     # calculate the corresponding MSI
     msi_calc = MSICalculator(
-        il=il_CONST, ol=ol_CONST,
+        il=il_const, ol=ol_const,
         ref_points=points_ref, test_points=points_test)
     msi_calc.run()
 

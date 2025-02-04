@@ -19,7 +19,9 @@ class TraditionalMetricsCalculator:
         Hausdorff: Hausdorff distance value
     """
 
-    def __init__(self, msi_calc: MSICalculator, slice_mask_ref: np.ndarray[int], slice_mask_test: np.ndarray[int]):
+    def __init__(self, msi_calc: MSICalculator,
+                 slice_mask_ref: np.ndarray[int],
+                 slice_mask_test: np.ndarray[int]):
         self.msicalc = msi_calc
         self.slice_mask_r = slice_mask_ref
         self.slice_mask_t = slice_mask_test

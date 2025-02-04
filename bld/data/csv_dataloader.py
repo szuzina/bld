@@ -12,7 +12,7 @@ class CSVDataLoader:
     Args:
         p_number: patient number
         idx: the indices for which MSI was calculated
-        root_folder: will be modified
+        datadownloader: data downloader object
 
     Returns:
         patient_data: all the manual scores corresponding to the selected patient
@@ -20,9 +20,11 @@ class CSVDataLoader:
 
     """
 
-    def __init__(self, p_number: int, idx: list, datadownloader: DataDownloader):
+    def __init__(self, p_number: int, idx: list,
+                 datadownloader: DataDownloader):
 
-        self.folder = datadownloader.root_folder + datadownloader.data_folder
+        self.folder = os.path.join(datadownloader.root_folder,
+                                   datadownloader.data_folder)
         self.p_number = p_number
 
         self.patient_data = self.find_patient_data()

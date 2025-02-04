@@ -14,8 +14,7 @@ class MetricsEvaluator:
 
     Args:
         patient: patient number
-        data_folder: will be modified
-        root_folder: will be modified
+        datadownloader: DataDownloader
         il: inside penalty level value
         ol: outside penalty level value
 
@@ -29,7 +28,9 @@ class MetricsEvaluator:
         haus: Hausdorff distance values
     """
 
-    def __init__(self, patient: int, datadownloader: DataDownloader, il: Optional[float] = 1, ol: Optional[float] = 1):
+    def __init__(self, patient: int,
+                 datadownloader: DataDownloader,
+                 il: Optional[float] = 1, ol: Optional[float] = 1):
         self.patient = patient
 
         self.il = il

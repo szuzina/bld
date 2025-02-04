@@ -23,7 +23,8 @@ class BLDCalculator:
             which are pairs of reference contour points based on BLD
     """
 
-    def __init__(self, dist_calc: DistanceCalculator, test_points: np.ndarray[int]):
+    def __init__(self, dist_calc: DistanceCalculator,
+                 test_points: np.ndarray[int]):
         self.distance_df = dist_calc.distance_table
         self.reference_points = dist_calc.reference_contour
         self.test_corrected_points = dist_calc.test_contour
@@ -50,10 +51,12 @@ class BLDCalculator:
         # the column minimum is the minimum distance from the reference points
         column_min_indices = np.argmin(self.distance_df.values, axis=0)
 
-        table = column_min_indices.reshape((-1, 1)) == \
+        table = np.array(
+            column_min_indices.reshape((-1, 1)) ==
             np.arange(0, self.distance_df.shape[0], 1).reshape((1, -1))
+        )
         # filtering the reference points (rows) to which there exist column minimum
-        filter_row_index_where_exists_column_min = table.sum(axis=0) > 0
+        filter_row_index_where_exists_column_min = (table.sum(axis=0)) > 0
         # the BMaxD is the maximum of the column minimums
         # we find the indices of BMaxD distances
         bmaxd_indices = np.arange(

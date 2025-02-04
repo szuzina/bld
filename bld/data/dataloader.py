@@ -1,6 +1,5 @@
 import glob
 import os
-from typing import Optional
 
 import cv2 as cv
 from natsort import natsorted
@@ -15,8 +14,7 @@ class DataLoader:
 
     Args:
         patient: patient number
-        data_folder: will be removed
-        root_folder: will be removed
+        datadownloader: data downloader object
 
     Returns:
         labels_test: the labels (paths) of all the patient to the test contours
@@ -28,7 +26,7 @@ class DataLoader:
 
     """
     def __init__(self, patient: int, datadownloader: DataDownloader):
-        self.folder = datadownloader.root_folder + datadownloader.data_folder
+        self.folder = os.path.join(datadownloader.root_folder, datadownloader.data_folder)
         self.patient = patient
 
         self.labels_test: list = []

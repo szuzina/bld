@@ -8,16 +8,16 @@ class MaskSplitter:
 
     Args:
         im_slice: the selected image slice
-        min_area: the minimal area where split is done
-        max_dist_ratio: the maximal distance ratio where we do not filter out
-                        convexity defect points considered for splitting
 
     Returns:
         splitted: the split mask
 
     """
     def __init__(self, im_slice):
+        # the minimal area where split is done
         self.min_area: float = 50
+        # the maximal distance ratio where we do not filter out
+        # convexity defect points considered for splitting
         self.max_dist_ratio: float = 0.5
         self.slice = im_slice
         self.thresh = self.slice.copy().astype(np.uint8)
@@ -70,7 +70,7 @@ class MaskSplitter:
 
         if len(points_filtered) > 1:
             # we find the start and end points for the split line
-            end, start = self.find_start_and_end_points(
+            _, _ = self.find_start_and_end_points(
                 points_filtered=points_filtered,
                 contour=contour
             )
