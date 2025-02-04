@@ -3,8 +3,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-from bld.metrics.bld_calculator import BLDCalculator
-from bld.metrics.distance_calculator import DistanceCalculator
+import bld.metrics as bldm
 
 
 class MSICalculator:
@@ -69,11 +68,12 @@ class MSICalculator:
         points_test_corrected = move_coms(c_ref=reference_contour,
                                           c_test=test_contour)
 
-        dist_calc = DistanceCalculator(reference_contour=reference_contour,
-                                       test_contour=points_test_corrected)
+        dist_calc = bldm.DistanceCalculator(
+            reference_contour=reference_contour,
+            test_contour=points_test_corrected)
         dist_calc.run()
 
-        bld_calc = BLDCalculator(dist_calc=dist_calc, test_points=test_contour)
+        bld_calc = bldm.BLDCalculator(dist_calc=dist_calc, test_points=test_contour)
         bld_calc.run()
 
         msi = self.calculate_msi(final_bld=bld_calc.final_bld)
