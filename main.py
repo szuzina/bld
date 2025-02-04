@@ -7,8 +7,6 @@ from bld.data import CSVDataLoader
 from bld.metrics import EvaluationMetrics
 from bld.evaluation import CorrelationAnalyzer
 
-import pprint
-
 
 def main():
     folder_url_ref = 'https://drive.google.com/uc?export=download&id=1u2CMExEtQSi1iMclEdlr84YkgY-fd2C-'
@@ -23,8 +21,8 @@ def main():
     # select the current slice (first slice: slice0)
     im_slice = 'slice100'
     # define the penalty values for MSI
-    IL_CONST = 1  # inside level
-    OL_CONST = 1  # outside level
+    il_CONST = 1  # inside level
+    ol_CONST = 1  # outside level
 
     # load the data corresponding the selected patient
     dl = DataLoader(patient=number, datadownloader=ddl)
@@ -35,17 +33,17 @@ def main():
 
     # calculate the corresponding MSI
     msi_calc = MSICalculator(
-        il=IL_CONST, ol=OL_CONST,
+        il=il_CONST, ol=ol_CONST,
         ref_points=points_ref, test_points=points_test)
     msi_calc.run()
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
 
-    CONST = 40
+    cons = 40
 
     d = {}
 
-    for i in range(1, CONST + 1, 1):
+    for i in range(1, cons + 1, 1):
         evaluator = MetricsEvaluator(patient=i, datadownloader=ddl, il=1, ol=1)
         print(f"patient {i} is done")
         evaluator.evaluate()
