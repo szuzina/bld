@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 
+from bld.data import DataLoader
 from bld.metrics import MSICalculator
 
 
@@ -9,7 +10,6 @@ class TraditionalMetricsCalculator:
     Calculate the traditional metrics for a selected slice.
 
     Args:
-        msi_calc: the MSICalculator class used for computing MSI
         slice_mask_ref: the reference mask of the current slice (all slice, not just one contour)
         slice_mask_test: the test mask of the current slice (all slice, not just one contour)
 
@@ -19,12 +19,16 @@ class TraditionalMetricsCalculator:
         Hausdorff: Hausdorff distance value
     """
 
-    def __init__(self, msi_calc: MSICalculator,
+    def __init__(self,
+                 points_test: np.ndarray[int],
+                 points_ref: np.ndarray[int],
                  slice_mask_ref: np.ndarray[int],
                  slice_mask_test: np.ndarray[int]):
-        self.msicalc = msi_calc
         self.slice_mask_r = slice_mask_ref
         self.slice_mask_t = slice_mask_test
+
+        self.points_ref = points_ref
+        self.points_test = points_test
 
         self.dice = self.find_dice()
         self.jaccard = self.find_jaccard()
@@ -34,11 +38,14 @@ class TraditionalMetricsCalculator:
         """
         Calculates Jaccard index on a mask of one slice.
         """
-        binary_array1 = np.where(self.slice_mask_r != 0, 1, 0)
-        binary_array2 = np.where(self.slice_mask_t != 0, 1, 0)
-        intersection = np.logical_and(binary_array1, binary_array2)
-        union = np.logical_or(binary_array1, binary_array2)
-        jaccard_index = np.sum(intersection) / np.sum(union)
+        if self.slice_mask_r.any() and self.slice_mask_t.any():
+            binary_array1 = np.where(self.slice_mask_r != 0, 1, 0)
+            binary_array2 = np.where(self.slice_mask_t != 0, 1, 0)
+            intersection = np.logical_and(binary_array1, binary_array2)
+            union = np.logical_or(binary_array1, binary_array2)
+            jaccard_index = np.sum(intersection) / np.sum(union)
+        else:
+            jaccard_index = 0
 
         return jaccard_index
 
@@ -46,10 +53,13 @@ class TraditionalMetricsCalculator:
         """
         Calculates Dice index on a mask of one slice.
         """
-        binary_array1 = np.where(self.slice_mask_r != 0, 1, 0)
-        binary_array2 = np.where(self.slice_mask_t != 0, 1, 0)
-        intersection = np.logical_and(binary_array1, binary_array2)
-        dice_index = 2 * np.sum(intersection) / (np.sum(binary_array1) + np.sum(binary_array2))
+        if self.slice_mask_r.any() and self.slice_mask_t.any():
+            binary_array1 = np.where(self.slice_mask_r != 0, 1, 0)
+            binary_array2 = np.where(self.slice_mask_t != 0, 1, 0)
+            intersection = np.logical_and(binary_array1, binary_array2)
+            dice_index = 2 * np.sum(intersection) / (np.sum(binary_array1) + np.sum(binary_array2))
+        else:
+            dice_index = 0
 
         return dice_index
 
@@ -58,10 +68,13 @@ class TraditionalMetricsCalculator:
         """
         Calculates Hausdorff distance between two contours.
         """
-        distances = cdist(coords1, coords2)
-        hausdorff_ab = np.max(np.min(distances, axis=1))
-        hausdorff_ba = np.max(np.min(distances, axis=0))
-        hausdorff_distance = max(hausdorff_ab, hausdorff_ba)
+        if np.any(coords1) and np.any(coords2):
+            distances = cdist(coords1, coords2)
+            hausdorff_ab = np.max(np.min(distances, axis=1))
+            hausdorff_ba = np.max(np.min(distances, axis=0))
+            hausdorff_distance = max(hausdorff_ab, hausdorff_ba)
+        else:
+            hausdorff_distance = np.inf
 
         return hausdorff_distance
 
@@ -71,8 +84,13 @@ class TraditionalMetricsCalculator:
         of individual contours.
         """
         distances = []
-        for r, t in zip(self.msicalc.ref_points, self.msicalc.test_points_in_order):
-            distances.append(self.find_hausdorff(coords1=r.T, coords2=t.T))
-        max_hausdorff = max(distances)
+        for r, t in zip(self.points_ref, self.points_test):  # itt igazából az msicalc.test_points_in_order kellene
+            if len(self.points_ref) > 0 and len(self.points_test) > 0:
+                distances.append(self.find_hausdorff(coords1=r.T.reshape(-1, 2), coords2=t.T.reshape(-1, 2)))
+                # reshape (2,) to 2D array for the cdist
+        if len(distances) > 0:
+            max_hausdorff = max(distances)
+        else:
+            max_hausdorff = np.inf
 
         return max_hausdorff

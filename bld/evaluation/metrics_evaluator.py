@@ -51,6 +51,12 @@ class MetricsEvaluator:
         self.jacc: list = []
         self.haus: list = []
 
+        self.msiwithzeros: list = []
+        self.diceallslices: list = []
+        self.jaccardallslices: list = []
+        self.hausdorffallslices: list = []
+        self.idxallslices: list = []
+
     @staticmethod
     def check_contours_on_slice(test_points: np.ndarray[int], ref_points: np.ndarray[int]):
         """
@@ -68,7 +74,7 @@ class MetricsEvaluator:
 
         return error
 
-    def find_metrics_for_one_slice(self, slice_index: int):
+    def find_msi_for_one_slice(self, slice_index: int):
         """
         Calculate MSI and traditional metrics for one image slice.
         """
@@ -82,14 +88,24 @@ class MetricsEvaluator:
             test_points=points_test)
         msi_calc.run()
 
-        # Finding the traditional metrics
-        trad_metrics_calc = TraditionalMetricsCalculator(
-                                msi_calc=msi_calc,
-                                slice_mask_ref=self.dl.mask_ref[slice_name],
-                                slice_mask_test=self.dl.mask_test[slice_name]
-        )
+        return msi_calc.msi
 
-        return msi_calc.msi, trad_metrics_calc.dice, trad_metrics_calc.jaccard, trad_metrics_calc.hausdorff
+    def find_traditional_metrics_for_one_slice(self, slice_index: int):
+        """
+        Calculate traditional metrics for one image slice (MSI is zero).
+        """
+        slice_name = 'slice' + str(slice_index)
+
+        points_ref = self.dl.c_ref[slice_name]
+        points_test = self.dl.c_test[slice_name]
+
+        trad_metrics_calc = TraditionalMetricsCalculator(
+                                points_ref=points_ref,
+                                points_test=points_test,
+                                slice_mask_ref=self.dl.mask_ref[slice_name],
+                                slice_mask_test=self.dl.mask_test[slice_name])
+
+        return trad_metrics_calc.dice, trad_metrics_calc.jaccard, trad_metrics_calc.hausdorff
 
     def evaluate(self):
         """
@@ -98,14 +114,25 @@ class MetricsEvaluator:
         for i in range(self.num_slices):
             points_ref = self.dl.c_ref['slice' + str(i)]
             points_test = self.dl.c_test['slice' + str(i)]
+
             is_run_correctly = self.check_contours_on_slice(
                 test_points=points_test,
                 ref_points=points_ref)
 
             if not is_run_correctly:  # there is no error while checking the contours
-                m, d, j, h = self.find_metrics_for_one_slice(slice_index=i)
+                m = self.find_msi_for_one_slice(slice_index=i)
+                d, j, h = self.find_traditional_metrics_for_one_slice(slice_index=i)
                 self.msindex.append(m)
                 self.idx.append(i)
                 self.haus.append(h)
                 self.dice.append(d)
                 self.jacc.append(j)
+
+            else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
+                dice, jacc, haus = self.find_traditional_metrics_for_one_slice(slice_index=i)
+                if len(points_ref) != 0 or len(points_test) != 0:  # the slice is not totally empty
+                    self.msiwithzeros.append(0)
+                    self.diceallslices.append(dice)
+                    self.jaccardallslices.append(jacc)
+                    self.hausdorffallslices.append(haus)
+                    self.idxallslices.append(i)
