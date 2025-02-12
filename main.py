@@ -79,7 +79,7 @@ def main():
             d_ix = 'p' + str(i)
             d[d_ix] = csvdl, evmet, analyzer, evaluator
         else:
-            print(f"Skipping correlation analysis for patient {i} due to insufficient data points.")
+            print(f"Skipping correlation analysis for patient {i} due to insufficient data points (without zero MSI).")
 
         # Check if score has enough elements for correlation analysis
         score2 = csvdl_with_zeros.filtered_scores
@@ -91,9 +91,9 @@ def main():
 
             # save the data
             d_ix = 'p' + str(i)
-            dwithzeros[d_ix] = evmet_with_zeros
+            dwithzeros[d_ix] = csvdl_with_zeros, evmet_with_zeros, analyzer2, evaluator
         else:
-            print(f"Skipping correlation analysis for patient {i} due to insufficient data points.")
+            print(f"Skipping correlation analysis for patient {i} due to insufficient data points (with zero MSI).")
 
 
 if __name__ == '__main__':
