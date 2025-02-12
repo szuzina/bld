@@ -27,7 +27,7 @@ class CorrelationAnalyzer:
         """Calculate the median for each element in the msi list."""
         median = []
         for i in range(len(self.metrics.msi)):
-            median.append(np.median(self.metrics.msi[i]))
+            median.append(np.min(self.metrics.msi[i]))
         self.median = median
         return 0
 
