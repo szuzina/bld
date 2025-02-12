@@ -127,10 +127,18 @@ class MetricsEvaluator:
                 self.haus.append(h)
                 self.dice.append(d)
                 self.jacc.append(j)
+                self.msiwithzeros.append(m)
+                self.diceallslices.append(d)
+                self.jaccardallslices.append(j)
+                self.hausdorffallslices.append(h)
+                self.idxallslices.append(i)
 
             else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
+                # we still want to have the slice with traditional metrics and MSI=0
                 dice, jacc, haus = self.find_traditional_metrics_for_one_slice(slice_index=i)
-                if len(points_ref) != 0 or len(points_test) != 0:  # the slice is not totally empty
+                if len(points_ref) != 0 and len(points_test) != 0:  # there is at least one ref and one test point
+                    # if there is only ref or only test contour, then all metrics will equal to zero/inf
+                    # --> not interesting
                     self.msiwithzeros.append(0)
                     self.diceallslices.append(dice)
                     self.jaccardallslices.append(jacc)

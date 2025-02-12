@@ -37,6 +37,7 @@ def main():
     cons = 40
 
     d = {}
+    dwithzeros = {}
 
     for i in range(1, cons + 1, 1):
         evaluator = MetricsEvaluator(patient=i, datadownloader=ddl, il=1, ol=1)
@@ -47,11 +48,24 @@ def main():
             idx=evaluator.idx,
             datadownloader=ddl)
 
+        csvdl_with_zeros = CSVDataLoader(
+            p_number=i,
+            idx=evaluator.idxallslices,
+            datadownloader=ddl
+        )
+
         evmet = EvaluationMetrics(
             msi=evaluator.msindex,
             hausdorff=evaluator.haus,
             dice=evaluator.dice,
             jaccard=evaluator.jacc)
+
+        evmet_with_zeros = EvaluationMetrics(
+            msi=evaluator.msiwithzeros,
+            hausdorff=evaluator.hausdorffallslices,
+            jaccard=evaluator.jaccardallslices,
+            dice=evaluator.diceallslices
+        )
 
         # Check if score has enough elements for correlation analysis
         score = csvdl.filtered_scores
@@ -64,6 +78,20 @@ def main():
             # save the data
             d_ix = 'p' + str(i)
             d[d_ix] = csvdl, evmet, analyzer, evaluator
+        else:
+            print(f"Skipping correlation analysis for patient {i} due to insufficient data points.")
+
+        # Check if score has enough elements for correlation analysis
+        score2 = csvdl_with_zeros.filtered_scores
+        if len(score2) >= 2 and len(score2) == len(evaluator.msiwithzeros):
+            analyzer2 = CorrelationAnalyzer(
+                evaluation_metrics=evmet_with_zeros,
+                manual_score=score2)
+            analyzer2.run()
+
+            # save the data
+            d_ix = 'p' + str(i)
+            dwithzeros[d_ix] = evmet_with_zeros
         else:
             print(f"Skipping correlation analysis for patient {i} due to insufficient data points.")
 
