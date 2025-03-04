@@ -63,8 +63,11 @@ class DataLoader:
         labels_ref: the labels of the reference files
         labels_test: the labels of the test files
         """
-        self.labels_test = natsorted(glob.glob(os.path.join(self.folder, "masks_test", "*")))
-        self.labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_ref", "*")))
+
+        self.labels_test = natsorted(glob.glob(os.path.join(self.folder, "masks_test", "*",
+                                                            "Case*_segmentation.nii.gz")))
+        self.labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_test", "*",
+                                                            "Case*_segmentation.nii.gz")))
 
     def get_contour_from_image(self, file_path: str):
         """
@@ -106,10 +109,8 @@ class DataLoader:
         """
         Creates a dictionary for a patient, contains the slice masks in np array.
         """
-        labels_test = natsorted(glob.glob(os.path.join(self.folder, "masks_test/*")))
-        labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_ref/*")))
-        mask_t = SITK.ReadImage(fileName=labels_test[self.patient - 1])
-        mask_r = SITK.ReadImage(fileName=labels_ref[self.patient - 1])
+        mask_t = SITK.ReadImage(fileName=self.labels_test[self.patient - 1])
+        mask_r = SITK.ReadImage(fileName=self.labels_ref[self.patient - 1])
         test = SITK.GetArrayFromImage(image=mask_t)
         ref = SITK.GetArrayFromImage(image=mask_r)
         number_of_slices = min(test.shape[0], ref.shape[0])
