@@ -1,9 +1,14 @@
 # bld
-Implementation of the Medical Similarity Index in Pythonű
+Implementation of the Medical Similarity Index in Python
 (along with nnUNet training pipeline, mask splitting algorithm and visualization graphs)
 
-Link of the Colab notebook ("main"):
-(https://colab.research.google.com/drive/1OnJABs1JgkQyQB6p3IpbVhhAFSL36dps?usp=sharing)
+Link of the Colab notebook for MSI calculation:
+https://colab.research.google.com/drive/1BNvLGiS4pBb3i4InozwbPLZ9j_l1nJvn?usp=sharing
+
+Link of the Colab notebook for visualization:
+
+Link of the Colab notebook for nnUNet training:
+
 
 Background: In the field of radiology and radiotherapy, accurate delineation of different tissues and organs plays a crucial role in both diagnostics and therapeutics. While the gold standard remains expert-driven manual segmentation, many machine learning-based automatic segmentation methods are emerging. The evaluation of these methods mainly relies on traditional area-based and distance-based metrics, but these metrics only incorporate geometrical properties and fail to adapt to different clinical applications. Thus, there is an understandable need for a clinically meaningful, reproducible assessment of autocontouring systems. 
 
