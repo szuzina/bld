@@ -6,9 +6,11 @@ Link of the Colab notebook for MSI calculation:
 https://colab.research.google.com/drive/1BNvLGiS4pBb3i4InozwbPLZ9j_l1nJvn?usp=sharing
 
 Link of the Colab notebook for visualization:
+https://colab.research.google.com/drive/1yyOAnRElT7RZt2_VHqXo_HVFNh400Lf1?usp=sharing
 
 Link of the Colab notebook for nnUNet training:
-
+https://colab.research.google.com/drive/1J8aW5w5fZGZ66E5MSXc1qaAgbaksmNuZ?usp=sharing
+(works for prostate, needs to be adjusted for myomas with nifti padding)
 
 Background: In the field of radiology and radiotherapy, accurate delineation of different tissues and organs plays a crucial role in both diagnostics and therapeutics. While the gold standard remains expert-driven manual segmentation, many machine learning-based automatic segmentation methods are emerging. The evaluation of these methods mainly relies on traditional area-based and distance-based metrics, but these metrics only incorporate geometrical properties and fail to adapt to different clinical applications. Thus, there is an understandable need for a clinically meaningful, reproducible assessment of autocontouring systems. 
 
