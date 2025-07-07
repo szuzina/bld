@@ -29,7 +29,7 @@ class Formatter:
         return [highlight if v == minimum_in_row else default for v in row]
 
     @staticmethod
-    def rearrange_table(df: pd.DataFrame):
+    def rearrange_table(df: pd.DataFrame) -> pd.DataFrame, List, List:
         """
         Rearrange the table based on the FMinD values.
         The closest point to Pref0 will be in the first column, the 2nd closest will be in the second, etc.
