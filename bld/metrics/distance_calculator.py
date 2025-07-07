@@ -27,7 +27,7 @@ class DistanceCalculator:
         self.pairwise_distance = self.find_pairwise_dist()
         self.distance_table = self.create_table()
 
-    def find_pairwise_dist(self):
+    def find_pairwise_dist(self) -> np.ndarray:
         """
         Finds the pairwise distances between two contours (i.e. a reference and a test contour).
         """
@@ -43,7 +43,7 @@ class DistanceCalculator:
 
         return pairwise_dist
 
-    def create_table(self):
+    def create_table(self) -> pd.DataFrame:
         """
         Creates the table with the distances. The rows correspond to the reference points,
         the columns correspond to the test points.
