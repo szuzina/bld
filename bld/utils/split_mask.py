@@ -80,7 +80,7 @@ class MaskSplitter:
             # this means that the mask is a special case
             print('Special case, it should be evaluated manually.')
 
-    def filter_points(self, distances: np.ndarray, far_points):
+    def filter_points(self, distances: np.ndarray, far_points) -> List:
         """
         Filter out the unnecessary convexity defect points.
 
@@ -95,7 +95,7 @@ class MaskSplitter:
         return points_filtered
 
     @staticmethod
-    def find_start_and_end_points(points_filtered: list, contour: np.ndarray[int]):
+    def find_start_and_end_points(points_filtered: list, contour: np.ndarray[int]) -> tuple, tuple:
         """
         Findig the star and end points of the splitting line.
         """
