@@ -34,7 +34,7 @@ class TraditionalMetricsCalculator:
         self.jaccard = self.find_jaccard()
         self.hausdorff = self.find_max_hausdorff()
 
-    def find_jaccard(self):
+    def find_jaccard(self) -> float:
         """
         Calculates Jaccard index on a mask of one slice.
         """
@@ -49,7 +49,7 @@ class TraditionalMetricsCalculator:
 
         return jaccard_index
 
-    def find_dice(self):
+    def find_dice(self) -> float:
         """
         Calculates Dice index on a mask of one slice.
         """
@@ -64,7 +64,7 @@ class TraditionalMetricsCalculator:
         return dice_index
 
     @staticmethod
-    def find_hausdorff(coords1: np.ndarray[int], coords2: np.ndarray[int]):
+    def find_hausdorff(coords1: np.ndarray[int], coords2: np.ndarray[int]) -> float:
         """
         Calculates Hausdorff distance between two contours.
         """
@@ -78,7 +78,7 @@ class TraditionalMetricsCalculator:
 
         return hausdorff_distance
 
-    def find_max_hausdorff(self):
+    def find_max_hausdorff(self) -> float:
         """
         Calculates Hausdorff distance on a mask of one slice as the maximum of Hausdorff distances
         of individual contours.
