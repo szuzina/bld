@@ -29,7 +29,7 @@ class MSICalculator:
         self.test_points_in_order = self.pair_contours()
         self.msi: list = []
 
-    def pair_contours(self):
+    def pair_contours(self) -> List:
         """
         Pair the test and reference contours on a slice based on the closest center of mass
         """
@@ -58,7 +58,7 @@ class MSICalculator:
         for r, t in zip(self.ref_points, self.test_points_in_order):
             self.msi.append(self.run_for_single_contour(r=r, t=t))
 
-    def run_for_single_contour(self, r, t):
+    def run_for_single_contour(self, r, t) -> List:
         """
         Calculate MSI for a single contour.
         """
@@ -80,7 +80,7 @@ class MSICalculator:
 
         return msi
 
-    def calculate_msi(self, final_bld: list):
+    def calculate_msi(self, final_bld: list) -> float:
         """
         Calculates the value of MSI for the current slice.
         """
@@ -129,7 +129,7 @@ def check_duplicate(items):
     return False
 
 
-def move_coms(c_ref: np.ndarray[int], c_test: np.ndarray[int]):
+def move_coms(c_ref: np.ndarray[int], c_test: np.ndarray[int]) -> np.ndarray:
     """
     Moves the test contour to align the center of mass with the COM of the reference contour.
 
