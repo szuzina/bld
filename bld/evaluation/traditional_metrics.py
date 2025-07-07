@@ -84,7 +84,7 @@ class TraditionalMetricsCalculator:
         of individual contours.
         """
         distances = []
-        for r, t in zip(self.points_ref, self.points_test):  # itt igazából az msicalc.test_points_in_order kellene
+        for r, t in zip(self.points_ref, self.points_test):
             if len(self.points_ref) > 0 and len(self.points_test) > 0:
                 distances.append(self.find_hausdorff(coords1=r.T.reshape(-1, 2), coords2=t.T.reshape(-1, 2)))
                 # reshape (2,) to 2D array for the cdist
