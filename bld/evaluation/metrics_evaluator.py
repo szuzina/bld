@@ -58,7 +58,7 @@ class MetricsEvaluator:
         self.idxallslices: list = []
 
     @staticmethod
-    def check_contours_on_slice(test_points: np.ndarray[int], ref_points: np.ndarray[int]):
+    def check_contours_on_slice(test_points: np.ndarray[int], ref_points: np.ndarray[int]) -> bool:
         """
         Check if the reference and test contours are compatible and have at least one element.
         """
@@ -74,7 +74,7 @@ class MetricsEvaluator:
 
         return error
 
-    def find_msi_for_one_slice(self, slice_index: int):
+    def find_msi_for_one_slice(self, slice_index: int) -> List:
         """
         Calculate MSI and traditional metrics for one image slice.
         """
@@ -90,7 +90,7 @@ class MetricsEvaluator:
 
         return msi_calc.msi
 
-    def find_traditional_metrics_for_one_slice(self, slice_index: int):
+    def find_traditional_metrics_for_one_slice(self, slice_index: int) -> float, float, float:
         """
         Calculate traditional metrics for one image slice (MSI is zero).
         """
