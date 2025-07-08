@@ -24,7 +24,7 @@ alt="Open In Colab"/>
  </a>
 (works for prostate, needs to be adjusted for myomas with nifti padding)
 
-We used Python version ...
+We used `Python` version `3.10`.
 The necessary packages and version numbers are listed in `requirements.txt` file.
 It should be installed as `pip install -r requirements.txt`.
 
