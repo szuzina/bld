@@ -4,22 +4,19 @@ Implementation of the Medical Similarity Index in Python
 
 Link of the Colab notebook for MSI calculation:
  <a target="_blank" href="https://colab.research.google.com/drive/1BNvLGiS4pBb3i4InozwbPLZ9j_l1nJvn?usp=sharing">
-   <img src="https://
-colab.research.google.com/assets/colab-badge.svg"
+   <img src="https://colab.research.google.com/assets/colab-badge.svg"
 alt="Open In Colab"/>
  </a>
 
 Link of the Colab notebook for visualization:
  <a target="_blank" href="https://colab.research.google.com/drive/1yyOAnRElT7RZt2_VHqXo_HVFNh400Lf1?usp=sharing">
-   <img src="https://
-colab.research.google.com/assets/colab-badge.svg"
+   <img src="https://colab.research.google.com/assets/colab-badge.svg"
 alt="Open In Colab"/>
  </a>
 
 Link of the Colab notebook for nnUNet training:
  <a target="_blank" href="https://colab.research.google.com/drive/1J8aW5w5fZGZ66E5MSXc1qaAgbaksmNuZ?usp=sharing">
-   <img src="https://
-colab.research.google.com/assets/colab-badge.svg"
+   <img src="https://colab.research.google.com/assets/colab-badge.svg"
 alt="Open In Colab"/>
  </a>
 (works for prostate, needs to be adjusted for myomas with nifti padding)
