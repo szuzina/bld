@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,7 @@ class MSICalculator:
         msi: the calculated MSI values
 
     """
-    def __init__(self, il: float, ol: float, test_points: np.ndarray[int], ref_points: np.ndarray[int]):
+    def __init__(self, il: float, ol: float, test_points: np.ndarray, ref_points: np.ndarray):
         self.test_points = test_points
         self.ref_points = ref_points
         self.il = il
@@ -58,7 +58,7 @@ class MSICalculator:
         for r, t in zip(self.ref_points, self.test_points_in_order):
             self.msi.append(self.run_for_single_contour(r=r, t=t))
 
-    def run_for_single_contour(self, r, t) -> List:
+    def run_for_single_contour(self, r: np.ndarray, t: np.ndarray) -> pd.Series:
         """
         Calculate MSI for a single contour.
         """
@@ -80,7 +80,7 @@ class MSICalculator:
 
         return msi
 
-    def calculate_msi(self, final_bld: list) -> float:
+    def calculate_msi(self, final_bld: list) -> pd.Series:
         """
         Calculates the value of MSI for the current slice.
         """
@@ -129,7 +129,7 @@ def check_duplicate(items):
     return False
 
 
-def move_coms(c_ref: np.ndarray[int], c_test: np.ndarray[int]) -> np.ndarray:
+def move_coms(c_ref: np.ndarray, c_test: np.ndarray) -> np.ndarray:
     """
     Moves the test contour to align the center of mass with the COM of the reference contour.
 

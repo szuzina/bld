@@ -24,7 +24,7 @@ class BLDCalculator:
     """
 
     def __init__(self, dist_calc: DistanceCalculator,
-                 test_points: np.ndarray[int]):
+                 test_points: np.ndarray):
         self.distance_df = dist_calc.distance_table
         self.reference_points = dist_calc.reference_contour
         self.test_corrected_points = dist_calc.test_contour

@@ -56,5 +56,3 @@ class DataDownloader:
                     mode='r') as zip_test):
                 zip_test.extractall(
                     path=os.path.join(self.root_folder, self.data_folder, "masks_test"))
-            
-            return 0

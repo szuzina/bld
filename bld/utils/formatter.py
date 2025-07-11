@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from typing import List, Tuple
+
 
 class Formatter:
     """
@@ -8,7 +10,7 @@ class Formatter:
     """
 
     @staticmethod
-    def color_red_font_minimum_in_a_column(column):
+    def color_red_font_minimum_in_a_column(column: pd.DataFrame) -> List:
         """
         Assign red color to the minimum value of the column.
         """
@@ -18,7 +20,7 @@ class Formatter:
         return [highlight if e == minimum_in_column else default for e in column]
 
     @staticmethod
-    def color_green_minimum_value_in_row(row):
+    def color_green_minimum_value_in_row(row: pd.DataFrame) -> List:
         """
         Assign green color to the minimum value of the row.
         """
@@ -29,7 +31,7 @@ class Formatter:
         return [highlight if v == minimum_in_row else default for v in row]
 
     @staticmethod
-    def rearrange_table(df: pd.DataFrame) -> pd.DataFrame, List, List:
+    def rearrange_table(df: pd.DataFrame) -> Tuple[pd.DataFrame, np.ndarray, np.ndarray]:
         """
         Rearrange the table based on the FMinD values.
         The closest point to Pref0 will be in the first column, the 2nd closest will be in the second, etc.

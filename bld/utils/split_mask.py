@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 
+from typing import List, Tuple
 
 class MaskSplitter:
     """
@@ -40,9 +41,9 @@ class MaskSplitter:
         #     points[, hull[, clockwise[, returnPoints]]]
         # ) ->	hull
         hull = cv.convexHull(contour, returnPoints=False)
-        hullpoints = contour[hull].squeeze()
-        if len(hullpoints) > 2:
-            area = cv.contourArea(hullpoints)
+        hull_points = contour[hull].squeeze()
+        if len(hull_points) > 2:
+            area = cv.contourArea(hull_points)
         else:
             area = 0
 
@@ -95,7 +96,7 @@ class MaskSplitter:
         return points_filtered
 
     @staticmethod
-    def find_start_and_end_points(points_filtered: list, contour: np.ndarray[int]) -> tuple, tuple:
+    def find_start_and_end_points(points_filtered: list, contour: np.ndarray) -> Tuple[tuple, tuple]:
         """
         Findig the star and end points of the splitting line.
         """

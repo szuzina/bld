@@ -15,8 +15,8 @@ class DistanceCalculator:
         distance_table: table of the pairwise distances
     """
 
-    def __init__(self, reference_contour: np.ndarray[int],
-                 test_contour: np.ndarray[int]):
+    def __init__(self, reference_contour: np.ndarray,
+                 test_contour: np.ndarray):
         self.reference_contour = reference_contour
         self.test_contour = test_contour
 

@@ -1,6 +1,5 @@
 from bld.data import DataDownloader, DataLoader
-from bld.evaluation import MetricsEvaluator
-from bld.metrics import MSICalculator, EvaluationMetrics
+from bld.metrics import MSICalculator
 
 
 def main():
@@ -19,7 +18,7 @@ def main():
     ol_const = 1  # outside level
 
     # load the data corresponding the selected patient
-    dl = DataLoader(patient=number, datadownloader=ddl)
+    dl = DataLoader(patient=number, data_downloader=ddl)
 
     # get the contours from the images
     points_ref = dl.c_ref[im_slice]
@@ -32,29 +31,6 @@ def main():
     msi_calc.run()
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
-
-    cons = 40
-
-    d = {}
-    dwithzeros = {}
-
-    for i in range(1, cons + 1, 1):
-        evaluator = MetricsEvaluator(patient=i, datadownloader=ddl, il=1, ol=1)
-        print(f"patient {i} is done")
-        evaluator.evaluate()
-
-        evmet = EvaluationMetrics(
-            msi=evaluator.msindex,
-            hausdorff=evaluator.haus,
-            dice=evaluator.dice,
-            jaccard=evaluator.jacc)
-
-        evmet_with_zeros = EvaluationMetrics(
-            msi=evaluator.msiwithzeros,
-            hausdorff=evaluator.hausdorffallslices,
-            jaccard=evaluator.jaccardallslices,
-            dice=evaluator.diceallslices
-        )
 
 
 if __name__ == '__main__':
