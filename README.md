@@ -7,7 +7,7 @@ Link of the Colab notebook for MSI calculation:
    <img src="https://colab.research.google.com/assets/colab-badge.svg"
 alt="Open In Colab"/>
  </a>
- Requirements: [Link text](https://github.com/szuzina/bld/wiki/Data_requirements)
+ See requirements [here](https://github.com/szuzina/bld/wiki/Data_requirements)
 
 Link of the Colab notebook for visualization:
  <a target="_blank" href="https://colab.research.google.com/drive/1yyOAnRElT7RZt2_VHqXo_HVFNh400Lf1?usp=sharing">
