@@ -1,6 +1,9 @@
 from bld.data import DataDownloader, DataLoader
 from bld.evaluation import MetricsEvaluator
-from bld.metrics import MSICalculator, EvaluationMetrics
+from bld.metrics import MSICalculator
+
+import pandas as pd
+import statistics
 
 
 def main():
@@ -33,28 +36,32 @@ def main():
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
 
-    cons = 40
+    # evaluate all the slices for one patient
+    evaluator = MetricsEvaluator(patient=number, datadownloader=ddl, il=il_const, ol=ol_const)
+    evaluator.evaluate()
 
-    d = {}
-    dwithzeros = {}
+    m = []
+    for i in range(len(evaluator.msindex)):
+        msi_median = statistics.median(evaluator.msindex[i])
+        m.append(float(msi_median))
 
-    for i in range(1, cons + 1, 1):
-        evaluator = MetricsEvaluator(patient=i, datadownloader=ddl, il=1, ol=1)
-        print(f"patient {i} is done")
-        evaluator.evaluate()
+    d = []
+    for i in range(len(evaluator.dice)):
+        d.append(float(evaluator.dice[i]))
 
-        evmet = EvaluationMetrics(
-            msi=evaluator.msindex,
-            hausdorff=evaluator.haus,
-            dice=evaluator.dice,
-            jaccard=evaluator.jacc)
+    j = []
+    for i in range(len(evaluator.jacc)):
+        j.append(float(evaluator.jacc[i]))
 
-        evmet_with_zeros = EvaluationMetrics(
-            msi=evaluator.msiwithzeros,
-            hausdorff=evaluator.hausdorffallslices,
-            jaccard=evaluator.jaccardallslices,
-            dice=evaluator.diceallslices
-        )
+    h = []
+    for i in range(len(evaluator.haus)):
+        h.append(float(evaluator.haus[i]))
+
+    idx = []
+    for i in range(len(evaluator.idx)):
+        idx.append(int(evaluator.idx[i]))
+
+    data = pd.DataFrame({'MSI': m, 'Dice': d, 'Jaccard': j, 'Hausdorff': h, 'index': idx})
 
 
 if __name__ == '__main__':
