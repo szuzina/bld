@@ -132,12 +132,12 @@ class MetricsEvaluator:
 
             else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
                 # we still want to have the slice with traditional metrics and MSI=0
-                t2 = self.find_traditional_metrics_for_one_slice(slice_index=i)
+                t_2 = self.find_traditional_metrics_for_one_slice(slice_index=i)
                 if len(points_ref) != 0 and len(points_test) != 0:  # there is at least one ref and one test point
                     # if there is only ref or only test contour, then all metrics will equal to zero/inf
                     # --> not interesting
                     self.msi_with_zeros.append(0)
-                    self.dice_all_slices.append(t2.dice)
-                    self.jaccard_all_slices.append(t2.jaccard)
-                    self.hausdorff_all_slices.append(t2.hausdorff)
+                    self.dice_all_slices.append(t_2.dice)
+                    self.jaccard_all_slices.append(t_2.jaccard)
+                    self.hausdorff_all_slices.append(t_2.hausdorff)
                     self.idx_all_slices.append(i)
