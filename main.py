@@ -1,5 +1,9 @@
 from bld.data import DataDownloader, DataLoader
 from bld.metrics import MSICalculator
+from bld.evaluation import MetricsEvaluator
+
+import pandas as pd
+import statistics
 
 
 def main():
@@ -31,6 +35,34 @@ def main():
     msi_calc.run()
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
+
+
+    # evaluate all the slices for one patient
+    evaluator = MetricsEvaluator(patient=number, datadownloader=ddl, il=il_const, ol=ol_const)
+    evaluator.evaluate()
+
+    m = []
+    for i in range(len(evaluator.msindex)):
+        msi_median = statistics.median(evaluator.msindex[i])
+        m.append(float(msi_median))
+
+    d = []
+    for i in range(len(evaluator.dice)):
+        d.append(float(evaluator.dice[i]))
+
+    j = []
+    for i in range(len(evaluator.jacc)):
+        j.append(float(evaluator.jacc[i]))
+
+    h = []
+    for i in range(len(evaluator.haus)):
+        h.append(float(evaluator.haus[i]))
+
+    idx = []
+    for i in range(len(evaluator.idx)):
+        idx.append(int(evaluator.idx[i]))
+
+    data = pd.DataFrame({'MSI': m, 'Dice': d, 'Jaccard': j, 'Hausdorff': h, 'index': idx})
 
 
 if __name__ == '__main__':
