@@ -1,6 +1,7 @@
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Tuple
 
 
 def calculate_bld_distribution(bmaxd: np.ndarray, fmind: np.ndarray,
