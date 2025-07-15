@@ -5,7 +5,8 @@ import zipfile
 import json
 from collections import OrderedDict
 
-from bld.utils import DataDownloaderUNet
+from utils import DataDownloaderUNet
+
 
 class DataLoaderUNet:
     def __init__(self, task_name: str, datadownloader: DataDownloaderUNet):
