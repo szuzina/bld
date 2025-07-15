@@ -22,6 +22,9 @@ alt="Open In Colab"/>
  </a>
 (works for prostate, needs to be adjusted for myomas with nifti padding)
 
+The repository contains a `utils` folder, which contains the `.py` files necessary for nnUNet training in local computers. The `requirements_nnunet.txt` lists the required packages for the neural network training. This code only needs the links of the training and test files, so helps with the preprocessing before using the `nnUNet` framework. Some additional hints are gathered in [this](https://docs.google.com/document/d/16qx0tp_DyQKLWU_9B1D1da3iIxKQayRoAXne3lC3tHI/edit?usp=sharing) document.
+
+
 We used `Python` version `3.10`.
 The necessary packages and version numbers are listed in `requirements.txt` file.
 It should be installed as `pip install -r requirements.txt`.
