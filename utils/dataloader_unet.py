@@ -1,9 +1,8 @@
+from collections import OrderedDict
+import json
 import os
 import shutil
 import zipfile
-
-import json
-from collections import OrderedDict
 
 from utils import DataDownloaderUNet
 
