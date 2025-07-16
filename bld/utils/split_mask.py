@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 import numpy as np
 import cv2 as cv
 
@@ -40,9 +42,9 @@ class MaskSplitter:
         #     points[, hull[, clockwise[, returnPoints]]]
         # ) ->	hull
         hull = cv.convexHull(contour, returnPoints=False)
-        hullpoints = contour[hull].squeeze()
-        if len(hullpoints) > 2:
-            area = cv.contourArea(hullpoints)
+        hull_points = contour[hull].squeeze()
+        if len(hull_points) > 2:
+            area = cv.contourArea(hull_points)
         else:
             area = 0
 
@@ -74,13 +76,17 @@ class MaskSplitter:
                 points_filtered=points_filtered,
                 contour=contour
             )
+            # cv2.line(image, start_point, end_point, color, thickness)
+            self.splitted = cv.line(self.splitted, start, end, [0, 0, 0], 1)
+            plt.imshow(self.splitted, cmap="Greens")
+            print("Did a split.")
 
         # if there is only one very concave area, we have to split with another method
         if len(points_filtered) == 1:
             # this means that the mask is a special case
             print('Special case, it should be evaluated manually.')
 
-    def filter_points(self, distances: np.ndarray, far_points):
+    def filter_points(self, distances: np.ndarray, far_points) -> List:
         """
         Filter out the unnecessary convexity defect points.
 
@@ -95,7 +101,7 @@ class MaskSplitter:
         return points_filtered
 
     @staticmethod
-    def find_start_and_end_points(points_filtered: list, contour: np.ndarray[int]):
+    def find_start_and_end_points(points_filtered: list, contour: np.ndarray) -> Tuple[tuple, tuple]:
         """
         Findig the star and end points of the splitting line.
         """
