@@ -9,8 +9,10 @@ class CorrelationAnalyzer:
     Calculate the correlation between manual scores, MSI and traditional metrics.
 
     Args:
-        evaluation_metrics:
+        evaluation_metrics: EvaluationMetrics class
         manual_score: manual scores loaded previously
+        method: define the method of the aggregation of MSI (if there are more than one contour, we have to aggregate
+            the contour MSI values into one slice MSI value
 
     Returns:
          results: dictionary with the correlation values

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 import numpy as np
 
@@ -105,7 +105,7 @@ class MetricsEvaluator:
                                 slice_mask_ref=self.dl.mask_ref[slice_name],
                                 slice_mask_test=self.dl.mask_test[slice_name])
 
-        return trad_metrics_calc.dice, trad_metrics_calc.jaccard, trad_metrics_calc.hausdorff
+        return trad_metrics_calc
 
     def evaluate(self):
         """
@@ -121,16 +121,16 @@ class MetricsEvaluator:
 
             if not is_run_correctly:  # there is no error while checking the contours
                 m = self.find_msi_for_one_slice(slice_index=i)
-                d, j, h = self.find_traditional_metrics_for_one_slice(slice_index=i)
+                t = self.find_traditional_metrics_for_one_slice(slice_index=i)
                 self.msindex.append(m)
                 self.idx.append(i)
-                self.haus.append(h)
-                self.dice.append(d)
-                self.jacc.append(j)
+                self.haus.append(t.hausdorff)
+                self.dice.append(t.dice)
+                self.jacc.append(t.jaccard)
                 self.msiwithzeros.append(m)
-                self.diceallslices.append(d)
-                self.jaccardallslices.append(j)
-                self.hausdorffallslices.append(h)
+                self.diceallslices.append(t.dice)
+                self.jaccardallslices.append(t.jaccard)
+                self.hausdorffallslices.append(t.hausdorff)
                 self.idxallslices.append(i)
 
             else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
