@@ -14,7 +14,7 @@ class MetricsEvaluator:
 
     Args:
         patient: patient number
-        datadownloader: DataDownloader
+        data_downloader: DataDownloader
         il: inside penalty level value
         ol: outside penalty level value
 
@@ -29,14 +29,14 @@ class MetricsEvaluator:
     """
 
     def __init__(self, patient: int,
-                 datadownloader: DataDownloader,
+                 data_downloader: DataDownloader,
                  il: Optional[float] = 1, ol: Optional[float] = 1):
         self.patient = patient
 
         self.il = il
         self.ol = ol
 
-        self.dl = DataLoader(patient=patient, datadownloader=datadownloader)
+        self.dl = DataLoader(patient=patient, data_downloader=data_downloader)
         self.folder = self.dl.folder
 
         # Get number of slices available
@@ -51,14 +51,14 @@ class MetricsEvaluator:
         self.jacc: list = []
         self.haus: list = []
 
-        self.msiwithzeros: list = []
-        self.diceallslices: list = []
-        self.jaccardallslices: list = []
-        self.hausdorffallslices: list = []
-        self.idxallslices: list = []
+        self.msi_with_zeros: list = []
+        self.dice_all_slices: list = []
+        self.jaccard_all_slices: list = []
+        self.hausdorff_all_slices: list = []
+        self.idx_all_slices: list = []
 
     @staticmethod
-    def check_contours_on_slice(test_points: np.ndarray[int], ref_points: np.ndarray[int]):
+    def check_contours_on_slice(test_points: np.ndarray, ref_points: np.ndarray) -> bool:
         """
         Check if the reference and test contours are compatible and have at least one element.
         """
@@ -74,7 +74,7 @@ class MetricsEvaluator:
 
         return error
 
-    def find_msi_for_one_slice(self, slice_index: int):
+    def find_msi_for_one_slice(self, slice_index: int) -> List:
         """
         Calculate MSI and traditional metrics for one image slice.
         """
@@ -90,7 +90,7 @@ class MetricsEvaluator:
 
         return msi_calc.msi
 
-    def find_traditional_metrics_for_one_slice(self, slice_index: int):
+    def find_traditional_metrics_for_one_slice(self, slice_index: int) -> TraditionalMetricsCalculator:
         """
         Calculate traditional metrics for one image slice (MSI is zero).
         """
@@ -124,23 +124,20 @@ class MetricsEvaluator:
                 t = self.find_traditional_metrics_for_one_slice(slice_index=i)
                 self.msindex.append(m)
                 self.idx.append(i)
-                self.haus.append(t.hausdorff)
-                self.dice.append(t.dice)
-                self.jacc.append(t.jaccard)
-                self.msiwithzeros.append(m)
-                self.diceallslices.append(t.dice)
-                self.jaccardallslices.append(t.jaccard)
-                self.hausdorffallslices.append(t.hausdorff)
-                self.idxallslices.append(i)
+                self.msi_with_zeros.append(m)
+                self.dice_all_slices.append(t.dice)
+                self.jaccard_all_slices.append(t.jaccard)
+                self.hausdorff_all_slices.append(t.hausdorff)
+                self.idx_all_slices.append(i)
 
             else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
                 # we still want to have the slice with traditional metrics and MSI=0
-                t = self.find_traditional_metrics_for_one_slice(slice_index=i)
+                t_2 = self.find_traditional_metrics_for_one_slice(slice_index=i)
                 if len(points_ref) != 0 and len(points_test) != 0:  # there is at least one ref and one test point
                     # if there is only ref or only test contour, then all metrics will equal to zero/inf
                     # --> not interesting
-                    self.msiwithzeros.append(0)
-                    self.diceallslices.append(t.dice)
-                    self.jaccardallslices.append(t.jaccard)
-                    self.hausdorffallslices.append(t.hausdorff)
-                    self.idxallslices.append(i)
+                    self.msi_with_zeros.append(0)
+                    self.dice_all_slices.append(t_2.dice)
+                    self.jaccard_all_slices.append(t_2.jaccard)
+                    self.hausdorff_all_slices.append(t_2.hausdorff)
+                    self.idx_all_slices.append(i)

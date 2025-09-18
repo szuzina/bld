@@ -14,7 +14,7 @@ class DataLoader:
 
     Args:
         patient: patient number
-        datadownloader: data downloader object
+        data_downloader: data downloader object
 
     Returns:
         labels_test: the labels (paths) of all the patient to the test contours
@@ -25,8 +25,8 @@ class DataLoader:
         mask_ref: reference masks in np arrays
 
     """
-    def __init__(self, patient: int, datadownloader: DataDownloader):
-        self.folder = os.path.join(datadownloader.root_folder, datadownloader.data_folder)
+    def __init__(self, patient: int, data_downloader: DataDownloader):
+        self.folder = os.path.join(data_downloader.root_folder, data_downloader.data_folder)
         self.patient = patient
 
         self.labels_test: list = []
@@ -66,7 +66,7 @@ class DataLoader:
         self.labels_test = natsorted(glob.glob(os.path.join(self.folder, "masks_test", "*")))
         self.labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_ref", "*")))
 
-    def get_contour_from_image(self, file_path: str):
+    def get_contour_from_image(self, file_path: str) -> dict:
         """
         Converts a nii.gz image to a list of contours.
 

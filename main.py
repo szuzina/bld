@@ -1,14 +1,16 @@
-from bld.data import DataDownloader, CSVDataLoader, DataLoader
-from bld.evaluation import MetricsEvaluator, CorrelationAnalyzer
-from bld.metrics import MSICalculator, EvaluationMetrics
+from bld.data import DataDownloader, DataLoader
+from bld.metrics import MSICalculator
+from bld.evaluation import MetricsEvaluator
+
+import pandas as pd
+import statistics
 
 
 def main():
     folder_url_ref = 'https://drive.google.com/uc?export=download&id=1u2CMExEtQSi1iMclEdlr84YkgY-fd2C-'
     folder_url_test = 'https://drive.google.com/uc?export=download&id=1U4o0AhgpF9RsS6nlGeJk8kvz2nDnVwmt'
-    csv_link = '1QFFfHTOHFNj2HEjX0XKbRwbB4ylw70ni'
 
-    ddl = DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test, csv_data_id=csv_link,
+    ddl = DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test,
                          data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
@@ -20,7 +22,7 @@ def main():
     ol_const = 1  # outside level
 
     # load the data corresponding the selected patient
-    dl = DataLoader(patient=number, datadownloader=ddl)
+    dl = DataLoader(patient=number, data_downloader=ddl)
 
     # get the contours from the images
     points_ref = dl.c_ref[im_slice]
@@ -34,66 +36,33 @@ def main():
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
 
-    cons = 40
 
-    d = {}
-    dwithzeros = {}
+    # evaluate all the slices for one patient
+    evaluator = MetricsEvaluator(patient=number, datadownloader=ddl, il=il_const, ol=ol_const)
+    evaluator.evaluate()
 
-    for i in range(1, cons + 1, 1):
-        evaluator = MetricsEvaluator(patient=i, datadownloader=ddl, il=1, ol=1)
-        print(f"patient {i} is done")
-        evaluator.evaluate()
-        csvdl = CSVDataLoader(
-            p_number=i,
-            idx=evaluator.idx,
-            datadownloader=ddl)
+    m = []
+    for i in range(len(evaluator.msindex)):
+        msi_median = statistics.median(evaluator.msindex[i])
+        m.append(float(msi_median))
 
-        csvdl_with_zeros = CSVDataLoader(
-            p_number=i,
-            idx=evaluator.idxallslices,
-            datadownloader=ddl
-        )
+    d = []
+    for i in range(len(evaluator.dice)):
+        d.append(float(evaluator.dice[i]))
 
-        evmet = EvaluationMetrics(
-            msi=evaluator.msindex,
-            hausdorff=evaluator.haus,
-            dice=evaluator.dice,
-            jaccard=evaluator.jacc)
+    j = []
+    for i in range(len(evaluator.jacc)):
+        j.append(float(evaluator.jacc[i]))
 
-        evmet_with_zeros = EvaluationMetrics(
-            msi=evaluator.msiwithzeros,
-            hausdorff=evaluator.hausdorffallslices,
-            jaccard=evaluator.jaccardallslices,
-            dice=evaluator.diceallslices
-        )
+    h = []
+    for i in range(len(evaluator.haus)):
+        h.append(float(evaluator.haus[i]))
 
-        # Check if score has enough elements for correlation analysis
-        score = csvdl.filtered_scores
-        if len(score) >= 2 and len(score) == len(evaluator.msindex):
-            analyzer = CorrelationAnalyzer(
-                evaluation_metrics=evmet,
-                manual_score=score)
-            analyzer.run()
+    idx = []
+    for i in range(len(evaluator.idx)):
+        idx.append(int(evaluator.idx[i]))
 
-            # save the data
-            d_ix = 'p' + str(i)
-            d[d_ix] = csvdl, evmet, analyzer, evaluator
-        else:
-            print(f"Skipping correlation analysis for patient {i} due to insufficient data points (without zero MSI).")
-
-        # Check if score has enough elements for correlation analysis
-        score2 = csvdl_with_zeros.filtered_scores
-        if len(score2) >= 2 and len(score2) == len(evaluator.msiwithzeros):
-            analyzer2 = CorrelationAnalyzer(
-                evaluation_metrics=evmet_with_zeros,
-                manual_score=score2)
-            analyzer2.run()
-
-            # save the data
-            d_ix = 'p' + str(i)
-            dwithzeros[d_ix] = csvdl_with_zeros, evmet_with_zeros, analyzer2, evaluator
-        else:
-            print(f"Skipping correlation analysis for patient {i} due to insufficient data points (with zero MSI).")
+    data = pd.DataFrame({'MSI': m, 'Dice': d, 'Jaccard': j, 'Hausdorff': h, 'index': idx})
 
 
 if __name__ == '__main__':

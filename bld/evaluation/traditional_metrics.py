@@ -1,9 +1,6 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 
-from bld.data import DataLoader
-from bld.metrics import MSICalculator
-
 
 class TraditionalMetricsCalculator:
     """
@@ -34,7 +31,7 @@ class TraditionalMetricsCalculator:
         self.jaccard = self.find_jaccard()
         self.hausdorff = self.find_max_hausdorff()
 
-    def find_jaccard(self):
+    def find_jaccard(self) -> float:
         """
         Calculates Jaccard index on a mask of one slice.
         """
@@ -49,7 +46,7 @@ class TraditionalMetricsCalculator:
 
         return jaccard_index
 
-    def find_dice(self):
+    def find_dice(self) -> float:
         """
         Calculates Dice index on a mask of one slice.
         """
@@ -64,7 +61,7 @@ class TraditionalMetricsCalculator:
         return dice_index
 
     @staticmethod
-    def find_hausdorff(coords1: np.ndarray[int], coords2: np.ndarray[int]):
+    def find_hausdorff(coords1: np.ndarray[int], coords2: np.ndarray[int]) -> float:
         """
         Calculates Hausdorff distance between two contours.
         """
@@ -78,13 +75,13 @@ class TraditionalMetricsCalculator:
 
         return hausdorff_distance
 
-    def find_max_hausdorff(self):
+    def find_max_hausdorff(self) -> float:
         """
         Calculates Hausdorff distance on a mask of one slice as the maximum of Hausdorff distances
         of individual contours.
         """
         distances = []
-        for r, t in zip(self.points_ref, self.points_test):  # itt igazából az msicalc.test_points_in_order kellene
+        for r, t in zip(self.points_ref, self.points_test):
             if len(self.points_ref) > 0 and len(self.points_test) > 0:
                 distances.append(self.find_hausdorff(coords1=r.T.reshape(-1, 2), coords2=t.T.reshape(-1, 2)))
                 # reshape (2,) to 2D array for the cdist
