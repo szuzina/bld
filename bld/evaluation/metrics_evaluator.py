@@ -50,12 +50,14 @@ class MetricsEvaluator:
         self.dice: list = []
         self.jacc: list = []
         self.haus: list = []
+        self.sdice: list = []
 
         self.msi_with_zeros: list = []
         self.dice_all_slices: list = []
         self.jaccard_all_slices: list = []
         self.hausdorff_all_slices: list = []
         self.idx_all_slices: list = []
+        self.sdice_all_slices = []
 
     @staticmethod
     def check_contours_on_slice(test_points: np.ndarray, ref_points: np.ndarray) -> bool:
@@ -123,12 +125,18 @@ class MetricsEvaluator:
                 m = self.find_msi_for_one_slice(slice_index=i)
                 t = self.find_traditional_metrics_for_one_slice(slice_index=i)
                 self.msindex.append(m)
+                self.dice.append(t.dice)
+                self.jacc.append(t.jaccard)
+                self.haus.append(t.hausdorff)
                 self.idx.append(i)
+                self.sdice.append(t.sdice)
+
                 self.msi_with_zeros.append(m)
                 self.dice_all_slices.append(t.dice)
                 self.jaccard_all_slices.append(t.jaccard)
                 self.hausdorff_all_slices.append(t.hausdorff)
                 self.idx_all_slices.append(i)
+                self.sdice_all_slices.append(t.sdice)
 
             else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
                 # we still want to have the slice with traditional metrics and MSI=0
@@ -141,3 +149,4 @@ class MetricsEvaluator:
                     self.jaccard_all_slices.append(t_2.jaccard)
                     self.hausdorff_all_slices.append(t_2.hausdorff)
                     self.idx_all_slices.append(i)
+                    self.sdice_all_slices.append(t_2.sdice)

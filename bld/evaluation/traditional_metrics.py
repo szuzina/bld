@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.spatial.distance import cdist
+import surface_distance as sd
 
 
 class TraditionalMetricsCalculator:
@@ -30,6 +31,7 @@ class TraditionalMetricsCalculator:
         self.dice = self.find_dice()
         self.jaccard = self.find_jaccard()
         self.hausdorff = self.find_max_hausdorff()
+        self.sdice = self.find_sdsc()
 
     def find_jaccard(self) -> float:
         """
@@ -91,3 +93,16 @@ class TraditionalMetricsCalculator:
             max_hausdorff = np.inf
 
         return max_hausdorff
+
+    def find_sdsc(self) -> float:
+        """
+        Calculates surface Dice Score on a mask of one slice.
+        The github.com/google-deepmind/surface-distance/ implementation was used with 1 mm tolerance.
+        """
+        spacing = (1.0, 1.0)
+        distances = sd.compute_surface_distances(mask_gt=self.slice_mask_r.astype(bool),
+                                                 mask_pred=self.slice_mask_t.astype(bool),
+                                                 spacing_mm=spacing)
+        surface_dice = sd.compute_surface_dice_at_tolerance(distances, tolerance_mm=1.0)
+
+        return surface_dice

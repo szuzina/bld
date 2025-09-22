@@ -36,9 +36,8 @@ def main():
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
 
-
     # evaluate all the slices for one patient
-    evaluator = MetricsEvaluator(patient=number, datadownloader=ddl, il=il_const, ol=ol_const)
+    evaluator = MetricsEvaluator(patient=number, data_downloader=ddl, il=il_const, ol=ol_const)
     evaluator.evaluate()
 
     m = []
