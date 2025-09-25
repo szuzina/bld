@@ -1,3 +1,5 @@
+from bld.data import DataLoader
+
 import numpy as np
 from scipy.spatial.distance import cdist
 import surface_distance as sd
@@ -32,6 +34,7 @@ class TraditionalMetricsCalculator:
         self.jaccard = self.find_jaccard()
         self.hausdorff = self.find_max_hausdorff()
         self.sdice = self.find_sdsc()
+        self.apl = self.find_apl()
 
     def find_jaccard(self) -> float:
         """
@@ -106,3 +109,13 @@ class TraditionalMetricsCalculator:
         surface_dice = sd.compute_surface_dice_at_tolerance(distances, tolerance_mm=1.0)
 
         return surface_dice
+
+    def find_apl(self) -> float:
+        """
+        Calculates APL (added path length) for one slice - slice-wise averaged.
+        https://github.com/kkiser1/Autosegmentation-Spatial-Similarity-Metrics/blob/master/APIs/segmentationMetrics_APIs.py implementation.
+        """
+
+        apl = (self.slice_mask_r.astype(bool) > self.slice_mask_t.astype(bool)).astype(int).sum()
+
+        return apl
