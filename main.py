@@ -1,12 +1,6 @@
-from scipy.spatial.distance import jaccard
-
 from bld.metrics import MSICalculator, EvaluationMetrics
 from bld.data import DataDownloader, CSVDataLoader, DataLoader
 from bld.evaluation import MetricsEvaluator, CorrelationAnalyzer
-
-import pandas as pd
-import statistics
-
 
 def main():
     # myoma 40 test cases
@@ -85,7 +79,7 @@ def main():
             # save the data
             d_ix = 'p' + str(i)
             d[d_ix] = csvdl, evmet, analyzer, evaluator
-            print(f"Ccorrelation analysis for patient {i} is done (without zero MSI).")
+            print(f"Correlation analysis for patient {i} is done (without zero MSI).")
         else:
             print(f"Skipping correlation analysis for patient {i} due to insufficient data points (without zero MSI).")
 
