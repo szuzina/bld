@@ -1,13 +1,15 @@
 import os
+import glob
 
 import pandas as pd
+from natsort import natsorted
 
 from bld.data.data_downloader import DataDownloader
 
 
 class CSVDataLoader:
     """
-    Load the csv files containing the manual scores in the necessary format for futher analysis.
+    Load the csv files containing the manual scores in the necessary format for further analysis.
 
     Args:
         p_number: patient number
@@ -35,7 +37,11 @@ class CSVDataLoader:
         Load the csv data for the selected patient.
         """
         csv_directory = os.path.join(self.folder, 'csv_dir')
-        patient_path = os.path.join(csv_directory, f'patient{self.p_number}.csv')
+
+        labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_ref", "*")))
+        n = str(labels_ref[self.p_number-1][-10:-7])
+
+        patient_path = os.path.join(csv_directory, f'p{n}.csv')
         df = pd.read_csv(filepath_or_buffer=patient_path, header=None, sep=';')
 
         return df
