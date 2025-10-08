@@ -18,7 +18,8 @@ def main():
     # myoma 26 test cases (2025.09.)
     folder_url_ref = 'https://drive.google.com/uc?export=download&id=1-0-N2WoFuTY2VFRcgS7B3m8Keneol6lj'
     folder_url_test = 'https://drive.google.com/uc?export=download&id=1ypr1BGSc0Ivm2mw-ta6wX3vLprP6RWmn'
-    csv_link = '16l1-D3uKkWS12gELR2XN5C-SRxH-BhPQ'
+    csv_link = '1wKgNBsnbCTSlyLNkP-8ElyGXAniujG4l'
+
 
     # the number of patients
     patient_number = 26
