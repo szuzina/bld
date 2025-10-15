@@ -3,6 +3,7 @@ import glob
 
 import pandas as pd
 from natsort import natsorted
+from typing import Optional
 
 from bld.data.data_downloader import DataDownloader
 
@@ -15,6 +16,7 @@ class CSVDataLoader:
         p_number: patient number
         idx: the indices for which MSI was calculated
         datadownloader: data downloader object
+        aggregation: the slice aggregation method
 
     Returns:
         patient_data: all the manual scores corresponding to the selected patient
@@ -23,11 +25,12 @@ class CSVDataLoader:
     """
 
     def __init__(self, p_number: int, idx: list,
-                 datadownloader: DataDownloader):
+                 datadownloader: DataDownloader, aggregation: Optional[int] = 1):
 
         self.folder = os.path.join(datadownloader.root_folder,
                                    datadownloader.data_folder)
         self.p_number = p_number
+        self.aggregation = aggregation  # 1: median, 2: min, 3: max
 
         self.patient_data = self.find_patient_data()
         self.filtered_scores = self.find_filtered_scores(filtered_rows=idx)
@@ -48,14 +51,18 @@ class CSVDataLoader:
 
     def find_filtered_scores(self, filtered_rows: list):
         """
-        Filter the manual scores to have just the slices for which MSI was calculated.
+        Filter the manual scores to have just the slices which we want to include in the correlation analysis.
 
         Args:
-            filtered_rows: the row indices for which MSI was calculated
+            filtered_rows: the row indices for which the manual scores are needed
+            (without zeros case: where MSI was calculated)
+            (with zeros case: all slices)
 
         Returns:
             filtered_scores: the scores for the filtered rows
         """
-        filtered_scores = self.patient_data.loc[self.patient_data.iloc[:, 0].isin(filtered_rows)].iloc[:, 1].tolist()
+
+        filtered_scores = self.patient_data.loc[
+                              self.patient_data.iloc[:, 0].isin(filtered_rows)].iloc[:, self.aggregation].tolist()
 
         return filtered_scores
