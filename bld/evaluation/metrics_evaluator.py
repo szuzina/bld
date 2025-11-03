@@ -127,10 +127,11 @@ class MetricsEvaluator:
                 m = self.find_msi_for_one_slice(slice_index=i)
                 t = self.find_traditional_metrics_for_one_slice(slice_index=i)
                 self.msindex.append(m)
+                self.idx.append(i)
                 self.dice.append(t.dice)
                 self.jacc.append(t.jaccard)
                 self.haus.append(t.hausdorff)
-                self.idx.append(i)
+
                 self.sdice.append(t.sdice)
                 self.apl.append(t.apl)
 
