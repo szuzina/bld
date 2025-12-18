@@ -2,7 +2,7 @@
 Implementation of the Medical Similarity Index in Python
 (along with nnUNet training pipeline, mask splitting algorithm and visualization graphs)
 
-![Pipeline overview](https://drive.google.com/file/d/1QdC7cdeQJahfqSnsjAyxLZhpQjFVDot5/view?usp=sharing)
+![Pipeline overview](https://drive.google.com/file/d/1WYq9aOcY86atrh9B0EAAOkhroGucCxS1/view?usp=sharing)
 
 
 Link of the Colab notebook for MSI calculation:
