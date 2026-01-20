@@ -131,8 +131,6 @@ class MetricsEvaluator:
                 self.jacc.append(t.jaccard)
                 self.haus.append(t.hausdorff)
                 self.idx.append(i)
-                self.sdice.append(t.sdice)
-                self.apl.append(t.apl)
 
                 self.msi_with_zeros.append(m)
                 self.dice_all_slices.append(t.dice)
