@@ -133,7 +133,6 @@ class MetricsEvaluator:
                 self.dice.append(t.dice)
                 self.jacc.append(t.jaccard)
                 self.haus.append(t.hausdorff)
-
                 self.sdice.append(t.sdice)
                 self.apl.append(t.apl)
                 self.hd95.append(t.hd95)
