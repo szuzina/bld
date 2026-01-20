@@ -52,6 +52,7 @@ class MetricsEvaluator:
         self.haus: list = []
         self.sdice: list = []
         self.apl: list = []
+        self.hd95: list = []
 
         self.msi_with_zeros: list = []
         self.dice_all_slices: list = []
@@ -60,6 +61,7 @@ class MetricsEvaluator:
         self.idx_all_slices: list = []
         self.sdice_all_slices: list= []
         self.apl_all_slices: list = []
+        self.hd95_all_slices: list = []
 
     @staticmethod
     def check_contours_on_slice(test_points: np.ndarray, ref_points: np.ndarray) -> bool:
@@ -134,6 +136,7 @@ class MetricsEvaluator:
 
                 self.sdice.append(t.sdice)
                 self.apl.append(t.apl)
+                self.hd95.append(t.hd95)
 
                 self.msi_with_zeros.append(m)
                 self.dice_all_slices.append(t.dice)
@@ -142,6 +145,7 @@ class MetricsEvaluator:
                 self.idx_all_slices.append(i)
                 self.sdice_all_slices.append(t.sdice)
                 self.apl_all_slices.append(t.apl)
+                self.hd95_all_slices.append(t.hd95)
 
             else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
                 # we still want to have the slice with traditional metrics and MSI=0
@@ -156,3 +160,4 @@ class MetricsEvaluator:
                     self.idx_all_slices.append(i)
                     self.sdice_all_slices.append(t_2.sdice)
                     self.apl_all_slices.append(t_2.apl)
+                    self.hd95_all_slices.append(t_2.hd95)

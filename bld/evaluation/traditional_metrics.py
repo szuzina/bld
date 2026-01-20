@@ -10,13 +10,18 @@ class TraditionalMetricsCalculator:
     Calculate the traditional metrics for a selected slice.
 
     Args:
+        points_test
+        points_ref
         slice_mask_ref: the reference mask of the current slice (all slice, not just one contour)
         slice_mask_test: the test mask of the current slice (all slice, not just one contour)
 
     Returns:
         dice: Dice index value
         jaccard: Jaccard index value
-        Hausdorff: Hausdorff distance value
+        hausdorff: Hausdorff distance value
+        sdice: Surface Dice Score
+        apl: Added Path Length
+        hd95: Hausdorff distance 95th percentile
     """
 
     def __init__(self,
@@ -35,6 +40,7 @@ class TraditionalMetricsCalculator:
         self.hausdorff = self.find_max_hausdorff()
         self.sdice = self.find_sdsc()
         self.apl = self.find_apl()
+        self.hd95 = self.find_max_hd95()
 
     def find_jaccard(self) -> float:
         """
@@ -119,3 +125,34 @@ class TraditionalMetricsCalculator:
         apl = (self.slice_mask_r.astype(bool) > self.slice_mask_t.astype(bool)).astype(int).sum()
 
         return apl
+
+    def find_hd95(self, coords1: np.ndarray[int], coords2: np.ndarray[int]) -> float:
+        """
+        Calculates the HD95 for one slice.
+        The directed Hausdorff distances are computed, and the maximum of the two 95th percentile is chosen as HD95.
+        """
+        if np.any(coords1) and np.any(coords2):
+            distances = cdist(coords1, coords2)
+            hd95_ab = np.percentile(np.min(distances, axis=1), 95)
+            hd95_ba = np.percentile(np.min(distances, axis=0), 95)
+            hd95 = max(hd95_ab, hd95_ba)
+        else:
+            hd95 = np.inf
+
+        return hd95
+
+    def find_max_hd95(self) -> float:
+        """
+        We may have multiple contours on a slice and need one HD95 per slice so we choose the maximum.
+        """
+        distances = []
+        for r, t in zip(self.points_ref, self.points_test):
+            if len(self.points_ref) > 0 and len(self.points_test) > 0:
+                distances.append(self.find_hd95(coords1=r.T.reshape(-1, 2), coords2=t.T.reshape(-1, 2)))
+                # reshape (2,) to 2D array for the cdist
+        if len(distances) > 0:
+            max_hd95 = max(distances)
+        else:
+            max_hd95 = np.inf
+
+        return max_hd95
