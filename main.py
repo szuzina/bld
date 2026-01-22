@@ -16,9 +16,9 @@ def main():
                          data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
-    number = 6
+    number = 1
     # select the current slice (first slice: slice0)
-    im_slice = 'slice1'
+    im_slice = 'slice173'
     # define the penalty values for MSI
     il_const = 1  # inside level
     ol_const = 1  # outside level
@@ -50,7 +50,7 @@ def main():
 
     data = pd.DataFrame({'MSI': m, 'Dice': evaluator.dice, 'Jaccard': evaluator.jacc, 'Hausdorff': evaluator.haus,
                          'SDCD': evaluator.sdice, 'APL': evaluator.apl, 'HD95': evaluator.hd95, 'index': evaluator.idx})
-    print(data)
+    print(data.to_string())
 
     # the number of slices with MSI
     print('number of slices with calculated MSI score:', len(evaluator.msindex))
