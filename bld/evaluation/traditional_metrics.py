@@ -112,7 +112,7 @@ class TraditionalMetricsCalculator:
         distances = sd.compute_surface_distances(mask_gt=self.slice_mask_r.astype(bool),
                                                  mask_pred=self.slice_mask_t.astype(bool),
                                                  spacing_mm=spacing)
-        surface_dice = sd.compute_surface_dice_at_tolerance(distances, tolerance_mm=1.0)
+        surface_dice = sd.compute_surface_dice_at_tolerance(distances, tolerance_mm=3.0)
 
         return surface_dice
 

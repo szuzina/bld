@@ -26,7 +26,7 @@ class MSICalculator:
         self.il = il
         self.ol = ol
 
-        self.test_points_in_order = self.pair_contours()
+        self.test_contours_in_order = self.pair_contours()
         self.msi: list = []
 
     def pair_contours(self) -> List:
@@ -55,7 +55,7 @@ class MSICalculator:
         return test_points_in_order
 
     def run(self):
-        for r, t in zip(self.ref_points, self.test_points_in_order):
+        for r, t in zip(self.ref_points, self.test_contours_in_order):
             self.msi.append(self.run_for_single_contour(r=r, t=t))
 
     def run_for_single_contour(self, r: np.ndarray, t: np.ndarray) -> pd.Series:

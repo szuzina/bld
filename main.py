@@ -12,13 +12,16 @@ def main():
     folder_url_test = 'https://drive.google.com/uc?export=download&id=114ZIpgQ50gDrom0Sl_S9OdsL-Fau_5DB'
     # myoma test masks
 
+    #folder_url_ref = 'https://drive.google.com/uc?export=download&id=1jc_2-7LKX1PkJC0jpvd8uMEDfyfL7R5n'  # prostata reference masks
+    #folder_url_test = 'https://drive.google.com/uc?export=download&id=1rqhUyEBWo-rCo8qv6E8j5BK01ZaCn1hK'  # prostata test masks
+
     ddl = DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test,
                          data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
-    number = 1
+    number = 4
     # select the current slice (first slice: slice0)
-    im_slice = 'slice173'
+    im_slice = 'slice8'
     # define the penalty values for MSI
     il_const = 1  # inside level
     ol_const = 1  # outside level
@@ -37,7 +40,6 @@ def main():
     msi_calc.run()
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
-
 
     # evaluate all the slices for one patient
     evaluator = MetricsEvaluator(patient=number, data_downloader=ddl, il=il_const, ol=ol_const)
