@@ -7,16 +7,21 @@ import statistics
 
 
 def main():
-    folder_url_ref = 'https://drive.google.com/uc?export=download&id=1u2CMExEtQSi1iMclEdlr84YkgY-fd2C-'
-    folder_url_test = 'https://drive.google.com/uc?export=download&id=1U4o0AhgpF9RsS6nlGeJk8kvz2nDnVwmt'
+    folder_url_ref = 'https://drive.google.com/uc?export=download&id=11oI9T_Rc0kReHvPqZlxDVwYjQ7we7CaC'
+    # myoma reference masks -> 6 cases (5 fold nnUNet) JAV!
+    folder_url_test = 'https://drive.google.com/uc?export=download&id=114ZIpgQ50gDrom0Sl_S9OdsL-Fau_5DB'
+    # myoma test masks
+
+    #folder_url_ref = 'https://drive.google.com/uc?export=download&id=1jc_2-7LKX1PkJC0jpvd8uMEDfyfL7R5n'  # prostata reference masks
+    #folder_url_test = 'https://drive.google.com/uc?export=download&id=1rqhUyEBWo-rCo8qv6E8j5BK01ZaCn1hK'  # prostata test masks
 
     ddl = DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test,
                          data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
-    number = 2
+    number = 4
     # select the current slice (first slice: slice0)
-    im_slice = 'slice100'
+    im_slice = 'slice8'
     # define the penalty values for MSI
     il_const = 1  # inside level
     ol_const = 1  # outside level
@@ -36,9 +41,8 @@ def main():
 
     print("The value of the MSI corresponding the selected slice is ", msi_calc.msi)
 
-
     # evaluate all the slices for one patient
-    evaluator = MetricsEvaluator(patient=number, datadownloader=ddl, il=il_const, ol=ol_const)
+    evaluator = MetricsEvaluator(patient=number, data_downloader=ddl, il=il_const, ol=ol_const)
     evaluator.evaluate()
 
     m = []
@@ -46,23 +50,20 @@ def main():
         msi_median = statistics.median(evaluator.msindex[i])
         m.append(float(msi_median))
 
-    d = []
-    for i in range(len(evaluator.dice)):
-        d.append(float(evaluator.dice[i]))
+    data = pd.DataFrame({'MSI': m, 'Dice': evaluator.dice, 'Jaccard': evaluator.jacc, 'Hausdorff': evaluator.haus,
+                         'SDCD': evaluator.sdice, 'APL': evaluator.apl, 'HD95': evaluator.hd95, 'index': evaluator.idx})
+    print(data.to_string())
 
-    j = []
-    for i in range(len(evaluator.jacc)):
-        j.append(float(evaluator.jacc[i]))
+    # the number of slices with MSI
+    print('number of slices with calculated MSI score:', len(evaluator.msindex))
+    # the number of nonempty slices (including the incorrect pairing resulted to MSI=0
+    print('number of nonempty slices:', len(evaluator.msi_with_zeros))
 
-    h = []
-    for i in range(len(evaluator.haus)):
-        h.append(float(evaluator.haus[i]))
-
-    idx = []
-    for i in range(len(evaluator.idx)):
-        idx.append(int(evaluator.idx[i]))
-
-    data = pd.DataFrame({'MSI': m, 'Dice': d, 'Jaccard': j, 'Hausdorff': h, 'index': idx})
+    # patient-level MSI score (average)
+    print('patient-level average MSI:', statistics.mean(m))
+    print('patient-level average Dice:', statistics.mean(evaluator.dice))
+    print('patient-level average Jaccard:', statistics.mean(evaluator.jacc))
+    print('patient-level average Hausdorff:', statistics.mean(evaluator.haus))
 
 
 if __name__ == '__main__':

@@ -1,5 +1,8 @@
+from bld.data import DataLoader
+
 import numpy as np
 from scipy.spatial.distance import cdist
+import surface_distance as sd
 
 
 class TraditionalMetricsCalculator:
@@ -7,13 +10,18 @@ class TraditionalMetricsCalculator:
     Calculate the traditional metrics for a selected slice.
 
     Args:
+        points_test
+        points_ref
         slice_mask_ref: the reference mask of the current slice (all slice, not just one contour)
         slice_mask_test: the test mask of the current slice (all slice, not just one contour)
 
     Returns:
         dice: Dice index value
         jaccard: Jaccard index value
-        Hausdorff: Hausdorff distance value
+        hausdorff: Hausdorff distance value
+        sdice: Surface Dice Score
+        apl: Added Path Length
+        hd95: Hausdorff distance 95th percentile
     """
 
     def __init__(self,
@@ -30,6 +38,9 @@ class TraditionalMetricsCalculator:
         self.dice = self.find_dice()
         self.jaccard = self.find_jaccard()
         self.hausdorff = self.find_max_hausdorff()
+        self.sdice = self.find_sdsc()
+        self.apl = self.find_apl()
+        self.hd95 = self.find_max_hd95()
 
     def find_jaccard(self) -> float:
         """
@@ -91,3 +102,57 @@ class TraditionalMetricsCalculator:
             max_hausdorff = np.inf
 
         return max_hausdorff
+
+    def find_sdsc(self) -> float:
+        """
+        Calculates surface Dice Score on a mask of one slice.
+        The github.com/google-deepmind/surface-distance/ implementation was used with 1 mm tolerance.
+        """
+        spacing = (1.0, 1.0)
+        distances = sd.compute_surface_distances(mask_gt=self.slice_mask_r.astype(bool),
+                                                 mask_pred=self.slice_mask_t.astype(bool),
+                                                 spacing_mm=spacing)
+        surface_dice = sd.compute_surface_dice_at_tolerance(distances, tolerance_mm=3.0)
+
+        return surface_dice
+
+    def find_apl(self) -> float:
+        """
+        Calculates APL (added path length) for one slice - slice-wise averaged.
+        https://github.com/kkiser1/Autosegmentation-Spatial-Similarity-Metrics/blob/master/APIs/segmentationMetrics_APIs.py implementation.
+        """
+
+        apl = (self.slice_mask_r.astype(bool) > self.slice_mask_t.astype(bool)).astype(int).sum()
+
+        return apl
+
+    def find_hd95(self, coords1: np.ndarray[int], coords2: np.ndarray[int]) -> float:
+        """
+        Calculates the HD95 for one slice.
+        The directed Hausdorff distances are computed, and the maximum of the two 95th percentile is chosen as HD95.
+        """
+        if np.any(coords1) and np.any(coords2):
+            distances = cdist(coords1, coords2)
+            hd95_ab = np.percentile(np.min(distances, axis=1), 95)
+            hd95_ba = np.percentile(np.min(distances, axis=0), 95)
+            hd95 = max(hd95_ab, hd95_ba)
+        else:
+            hd95 = np.inf
+
+        return hd95
+
+    def find_max_hd95(self) -> float:
+        """
+        We may have multiple contours on a slice and need one HD95 per slice so we choose the maximum.
+        """
+        distances = []
+        for r, t in zip(self.points_ref, self.points_test):
+            if len(self.points_ref) > 0 and len(self.points_test) > 0:
+                distances.append(self.find_hd95(coords1=r.T.reshape(-1, 2), coords2=t.T.reshape(-1, 2)))
+                # reshape (2,) to 2D array for the cdist
+        if len(distances) > 0:
+            max_hd95 = max(distances)
+        else:
+            max_hd95 = np.inf
+
+        return max_hd95

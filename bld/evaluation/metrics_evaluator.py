@@ -1,5 +1,6 @@
 from typing import Optional, List
 
+import nibabel as nib
 import numpy as np
 
 from bld.data import DataLoader
@@ -39,6 +40,12 @@ class MetricsEvaluator:
         self.dl = DataLoader(patient=patient, data_downloader=data_downloader)
         self.folder = self.dl.folder
 
+        # get pixel spacing to correct the Hausdorff distance from px to mm
+        img = nib.load(self.dl.labels_ref[self.patient])
+        header = img.header
+        spacing = header.get_zooms()
+        self.x_spacing = spacing[0]
+
         # Get number of slices available
         num_slices_test = len([key for key in self.dl.mask_test if key.startswith('slice')])
         num_slices_ref = len([key for key in self.dl.c_ref if key.startswith('slice')])
@@ -50,12 +57,18 @@ class MetricsEvaluator:
         self.dice: list = []
         self.jacc: list = []
         self.haus: list = []
+        self.sdice: list = []
+        self.apl: list = []
+        self.hd95: list = []
 
         self.msi_with_zeros: list = []
         self.dice_all_slices: list = []
         self.jaccard_all_slices: list = []
         self.hausdorff_all_slices: list = []
         self.idx_all_slices: list = []
+        self.sdice_all_slices: list= []
+        self.apl_all_slices: list = []
+        self.hd95_all_slices: list = []
 
     @staticmethod
     def check_contours_on_slice(test_points: np.ndarray, ref_points: np.ndarray) -> bool:
@@ -126,13 +139,19 @@ class MetricsEvaluator:
                 self.idx.append(i)
                 self.dice.append(t.dice)
                 self.jacc.append(t.jaccard)
-                self.haus.append(t.hausdorff)
+                self.haus.append(t.hausdorff * self.x_spacing)
+                self.sdice.append(t.sdice)
+                self.apl.append(t.apl)
+                self.hd95.append(t.hd95 * self.x_spacing)
 
                 self.msi_with_zeros.append(m)
                 self.dice_all_slices.append(t.dice)
                 self.jaccard_all_slices.append(t.jaccard)
-                self.hausdorff_all_slices.append(t.hausdorff)
+                self.hausdorff_all_slices.append(t.hausdorff * self.x_spacing)
                 self.idx_all_slices.append(i)
+                self.sdice_all_slices.append(t.sdice)
+                self.apl_all_slices.append(t.apl)
+                self.hd95_all_slices.append(t.hd95 * self.x_spacing)
 
             else:  # there was some kind of error while checking the contours (empty slice or incorrect pairing)
                 # we still want to have the slice with traditional metrics and MSI=0
@@ -143,5 +162,8 @@ class MetricsEvaluator:
                     self.msi_with_zeros.append(0)
                     self.dice_all_slices.append(t_2.dice)
                     self.jaccard_all_slices.append(t_2.jaccard)
-                    self.hausdorff_all_slices.append(t_2.hausdorff)
+                    self.hausdorff_all_slices.append(t_2.hausdorff * self.x_spacing)
                     self.idx_all_slices.append(i)
+                    self.sdice_all_slices.append(t_2.sdice)
+                    self.apl_all_slices.append(t_2.apl)
+                    self.hd95_all_slices.append(t_2.hd95 * self.x_spacing)
