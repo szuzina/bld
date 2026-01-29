@@ -41,7 +41,7 @@ class MetricsEvaluator:
         self.folder = self.dl.folder
 
         # get pixel spacing to correct the Hausdorff distance from px to mm
-        img = nib.load(self.dl.labels_ref[self.patient])
+        img = nib.load(self.dl.labels_ref[self.patient-1])
         header = img.header
         spacing = header.get_zooms()
         self.x_spacing = spacing[0]
