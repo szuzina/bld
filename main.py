@@ -1,6 +1,9 @@
 from bld.metrics import MSICalculator, EvaluationMetrics
 from bld.data import DataDownloader, CSVDataLoader, DataLoader
 from bld.evaluation import MetricsEvaluator, CorrelationAnalyzer
+from bld.segmentation_errors import SegmentationError, CreateSegmentationError, SegmentationErrorPatient
+from bld.segmentation_errors import GenerateSeries, CreateVisualization
+
 
 def main():
     # myoma 40 test cases
@@ -20,6 +23,10 @@ def main():
     folder_url_test = 'https://drive.google.com/uc?export=download&id=1ypr1BGSc0Ivm2mw-ta6wX3vLprP6RWmn'
     csv_link = '1wKgNBsnbCTSlyLNkP-8ElyGXAniujG4l'
 
+    # pancreas cysts new scoring (4 patients)
+    #folder_url_ref = 'https://drive.google.com/uc?export=download&id=1gMLWCnHnm8TFqVJfGJwdf2OHTstGdyMS'
+    #folder_url_test = 'https://drive.google.com/uc?export=download&id=1dcDD-nZnFvPAxH4hRe6wgM4N2qqJDOXC'
+    #csv_link = '1nQvEUEoAE8O73rNE4GLoESs9XUG-tD8u'
 
     # the number of patients
     patient_number = 26
@@ -30,10 +37,10 @@ def main():
     # select the number of the patient (first patient: 1)
     number = 2
     # select the current slice (first slice: slice0)
-    im_slice = 'slice130'
+    im_slice = 'slice13'
     # define the penalty values for MSI
-    il_const = 1  # inside level
-    ol_const = 10  # outside level
+    il_const = 10  # inside level
+    ol_const = 1  # outside level
 
     # load the data corresponding the selected patient
     dl = DataLoader(patient=number, data_downloader=ddl)
@@ -111,6 +118,15 @@ def main():
             print(f"Correlation analysis for patient {i} is done (with zero MSI).")
         else:
             print(f"Skipping correlation analysis for patient {i} due to insufficient data points (with zero MSI).")
+
+# ----------------------------------------------------------------------------------------
+# CREATE SEGMENTATION ERRORS AND VISUALIZE
+
+    segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="expansion", magnitude_mm=1)
+    print(segm_error_patient.results)
+
+    visualization = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
+                                        original_mask=dl.c_ref[im_slice])
 
 
 if __name__ == '__main__':
