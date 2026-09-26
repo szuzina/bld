@@ -1,22 +1,20 @@
 from bld.metrics import MSICalculator, EvaluationMetrics
 from bld.data import DataDownloader, CSVDataLoader, DataLoader
 from bld.evaluation import MetricsEvaluator, CorrelationAnalyzer
-from bld.segmentation_errors import SegmentationError, CreateSegmentationError, SegmentationErrorPatient
-from bld.segmentation_errors import GenerateSeries, CreateVisualization
 
 
 def main():
     # myoma 40 test cases
-    #folder_url_ref = 'https://drive.google.com/uc?export=download&id=1u2CMExEtQSi1iMclEdlr84YkgY-fd2C-'
-    #folder_url_test = 'https://drive.google.com/uc?export=download&id=1U4o0AhgpF9RsS6nlGeJk8kvz2nDnVwmt'
+    # folder_url_ref = 'https://drive.google.com/uc?export=download&id=1u2CMExEtQSi1iMclEdlr84YkgY-fd2C-'
+    # folder_url_test = 'https://drive.google.com/uc?export=download&id=1U4o0AhgpF9RsS6nlGeJk8kvz2nDnVwmt'
 
     # myoma 6 test cases
     # folder_url_ref = 'https://drive.google.com/uc?export=download&id=1KaVRqftKKNZyoMACF6t_m4gaabSr0We8'
     # folder_url_test = 'https://drive.google.com/uc?export=download&id=114ZIpgQ50gDrom0Sl_S9OdsL-Fau_5DB'
 
     # prostate 6 test cases
-    #folder_url_ref = 'https://drive.google.com/uc?export=download&id=1jc_2-7LKX1PkJC0jpvd8uMEDfyfL7R5n'
-    #folder_url_test = 'https://drive.google.com/uc?export=download&id=1rqhUyEBWo-rCo8qv6E8j5BK01ZaCn1hK'
+    # folder_url_ref = 'https://drive.google.com/uc?export=download&id=1jc_2-7LKX1PkJC0jpvd8uMEDfyfL7R5n'
+    # folder_url_test = 'https://drive.google.com/uc?export=download&id=1rqhUyEBWo-rCo8qv6E8j5BK01ZaCn1hK'
 
     # myoma 26 test cases (2025.09.)
     folder_url_ref = 'https://drive.google.com/uc?export=download&id=1-0-N2WoFuTY2VFRcgS7B3m8Keneol6lj'
@@ -24,9 +22,9 @@ def main():
     csv_link = '1wKgNBsnbCTSlyLNkP-8ElyGXAniujG4l'
 
     # pancreas cysts new scoring (4 patients)
-    #folder_url_ref = 'https://drive.google.com/uc?export=download&id=1gMLWCnHnm8TFqVJfGJwdf2OHTstGdyMS'
-    #folder_url_test = 'https://drive.google.com/uc?export=download&id=1dcDD-nZnFvPAxH4hRe6wgM4N2qqJDOXC'
-    #csv_link = '1nQvEUEoAE8O73rNE4GLoESs9XUG-tD8u'
+    # folder_url_ref = 'https://drive.google.com/uc?export=download&id=1gMLWCnHnm8TFqVJfGJwdf2OHTstGdyMS'
+    # folder_url_test = 'https://drive.google.com/uc?export=download&id=1dcDD-nZnFvPAxH4hRe6wgM4N2qqJDOXC'
+    # csv_link = '1nQvEUEoAE8O73rNE4GLoESs9XUG-tD8u'
 
     # the number of patients
     patient_number = 26
@@ -118,15 +116,6 @@ def main():
             print(f"Correlation analysis for patient {i} is done (with zero MSI).")
         else:
             print(f"Skipping correlation analysis for patient {i} due to insufficient data points (with zero MSI).")
-
-# ----------------------------------------------------------------------------------------
-# CREATE SEGMENTATION ERRORS AND VISUALIZE
-
-    segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="expansion", magnitude_mm=1)
-    print(segm_error_patient.results)
-
-    visualization = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
-                                        original_mask=dl.c_ref[im_slice])
 
 
 if __name__ == '__main__':
