@@ -5,6 +5,7 @@ import numpy as np
 from scipy import ndimage
 
 from bld.segmentation_errors import SegmentationError
+from bld.segmentation_errors.errors.errors_utils import ErrorsUtils
 
 
 class CreateSegmentationError:
@@ -66,31 +67,34 @@ class CreateSegmentationError:
 
         if self.error_type == "expansion":
             return self.expansion(float(self.magnitude_mm))
-        if self.error_type == "erosion":
+        elif self.error_type == "erosion":
             return self.erosion(float(self.magnitude_mm))
-        if self.error_type == "translation":
+        elif self.error_type == "translation":
             return self.translation(self.magnitude_mm)
-        if self.error_type == "directional_expansion":
+        elif self.error_type == "directional_expansion":
             return self.directional_expansion(
                 magnitude_mm=float(self.magnitude_mm),
                 axis=kwargs.get("axis", 0),
                 direction=kwargs.get("direction", 1),
             )
-        if self.error_type == "directional_erosion":
+        elif self.error_type == "directional_erosion":
             return self.directional_erosion(
                 magnitude_mm=float(self.magnitude_mm),
                 axis=kwargs.get("axis", 0),
                 direction=kwargs.get("direction", 1),
             )
-        return self.random_boundary(
-            magnitude_mm=float(self.magnitude_mm),
-            probability=kwargs.get("probability", 0.5),
-        )
+        else:
+            return self.random_boundary(
+                magnitude_mm=float(self.magnitude_mm),
+                probability=kwargs.get("probability", 0.5),
+            )
 
     def create_result(self, **kwargs: Any) -> SegmentationError:
         """Create an error and return both the mask and quantitative metadata as a SegmentationError class object."""
         result_contour = self.create(**kwargs)
-        return SegmentationError(result_mask=result_contour, error_type=self.error_type, magnitude_mm=self.magnitude_mm)
+        return SegmentationError(result_mask=result_contour,
+                                 error_type=self.error_type,
+                                 magnitude_mm=self.magnitude_mm)
 
     # ------------------------------------------------------------------
     # Mask modification functions
@@ -107,7 +111,7 @@ class CreateSegmentationError:
             Structuring element used for the dilation. Non-zero elements are considered True. If no structuring element
             is provided an element is generated with a square connectivity equal to one.
         """
-        self._validate_magnitude(magnitude_mm)
+        ErrorsUtils.validate_magnitude(magnitude_mm)
         if magnitude_mm == 0:
             return self.mask.copy()
         structure = self._ellipse_structure(magnitude_mm)
@@ -115,7 +119,7 @@ class CreateSegmentationError:
 
     def erosion(self, magnitude_mm: float) -> np.ndarray:
         """Erode the mask isotropically by ``magnitude_mm``."""
-        self._validate_magnitude(magnitude_mm)
+        ErrorsUtils.validate_magnitude(magnitude_mm)
         if magnitude_mm == 0:
             return self.mask.copy()
         structure = self._ellipse_structure(magnitude_mm)
@@ -177,8 +181,8 @@ class CreateSegmentationError:
         if axis not in (0, 1):
             raise ValueError(f"axis must be 0 or 1 for a 2D mask, got {axis}.")
 
-        self._validate_direction(axis, direction)
-        self._validate_magnitude(magnitude_mm)
+        ErrorsUtils.validate_direction(axis, direction)
+        ErrorsUtils.validate_magnitude(magnitude_mm)
         if magnitude_mm == 0:
             return self.mask.copy()
 
@@ -218,8 +222,8 @@ class CreateSegmentationError:
         if axis not in (0, 1):
             raise ValueError(f"axis must be 0 or 1 for a 2D mask, got {axis}.")
 
-        self._validate_direction(axis, direction)
-        self._validate_magnitude(magnitude_mm)
+        ErrorsUtils.validate_direction(axis, direction)
+        ErrorsUtils.validate_magnitude(magnitude_mm)
 
         if magnitude_mm == 0:
             return self.mask.copy()
@@ -254,7 +258,7 @@ class CreateSegmentationError:
         if self.mask.ndim != 2:
             raise ValueError(f"Expected a 2D mask, but got {self.mask.ndim}D.")
 
-        self._validate_magnitude(magnitude_mm)
+        ErrorsUtils.validate_magnitude(magnitude_mm)
         if not 0.0 <= probability <= 1.0:
             raise ValueError(f"probability must be between 0 and 1, got {probability}.")
         if magnitude_mm == 0:
@@ -288,17 +292,3 @@ class CreateSegmentationError:
         y, x = np.ogrid[-y_max:y_max + 1, -x_max:x_max + 1]
         dist_sq = (y * self.spacing[0]) ** 2 + (x * self.spacing[1]) ** 2
         return dist_sq <= radius_mm ** 2
-
-    @staticmethod
-    def _validate_magnitude(magnitude_mm: float) -> None:
-        if not np.isfinite(magnitude_mm):
-            raise ValueError("magnitude_mm must be finite.")
-        if magnitude_mm < 0:
-            raise ValueError("magnitude_mm must be non-negative.")
-
-    @staticmethod
-    def _validate_direction(axis: int, direction: int) -> None:
-        if not isinstance(axis, (int, np.integer)):
-            raise TypeError("axis must be an integer.")
-        if direction not in (-1, 1):
-            raise ValueError("direction must be either +1 or -1.")

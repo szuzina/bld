@@ -9,7 +9,7 @@ segmentation metrics and downstream radiotherapy dose metrics.
 """
 
 from .segmentation_error import SegmentationError
-from .create_segmentation_error import CreateSegmentationError
+from bld.segmentation_errors.create_segmentation_error import CreateSegmentationError
 from .segmentation_error_patient import SegmentationErrorPatient
 from .generate_series import GenerateSeries
 from .create_visualization import CreateVisualization

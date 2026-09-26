@@ -21,7 +21,9 @@ class SegmentationErrorPatient:
         Dictionary with the slice number and the corresponding modified binary contour (as a NumPy array).
     """
 
-    def __init__(self, dl: DataLoader, error_type: str, magnitude_mm: Union[float, Sequence[float]],
+    def __init__(self, dl: DataLoader,
+                 error_type: str,
+                 magnitude_mm: Union[float, Sequence[float]],
                  seed: Optional[int] = None):
         self.dl = dl
 
@@ -34,11 +36,13 @@ class SegmentationErrorPatient:
     def generate_all_slices_for_one_patient(self, **kwargs: Any):
         mod_contours = {}
         for i in range(len(self.dl.c_ref)):
-            mod_contours['slice' + str(i)] = CreateSegmentationError(mask=self.dl.mask_ref['slice' + str(i)],
-                                                                     spacing=self.dl.spacing[:2],  # dl.spacing: (x,y,z)
-                                                                     seed=0,
-                                                                     error_type=self.error_type,
-                                                                     magnitude_mm=self.magnitude_mm).result
+            mod_contours['slice' + str(i)] = CreateSegmentationError(
+                mask=self.dl.mask_ref['slice' + str(i)],
+                spacing=self.dl.spacing[:2],  # dl.spacing: (x,y,z)
+                seed=0,
+                error_type=self.error_type,
+                magnitude_mm=self.magnitude_mm
+            ).result
 
         # generate metadata
         voxel_volume = float(np.prod(self.dl.spacing))

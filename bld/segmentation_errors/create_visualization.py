@@ -3,7 +3,6 @@ from typing import Dict, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import ndimage
 
 from bld.segmentation_errors import SegmentationError
 
