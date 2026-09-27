@@ -1,7 +1,9 @@
 from __future__ import annotations
 from typing import Union, Sequence, Optional, Any
 
+import nibabel as nib
 import numpy as np
+import os
 
 from bld.data import DataLoader
 from bld.segmentation_errors import CreateSegmentationError
@@ -75,6 +77,35 @@ class SegmentationErrorPatient:
         }
 
         return mod_contours, metadata
+
+    def save_masks_as_nifti(self):
+        len_x = self.dl.mask_ref['slice0'].shape[0]
+        len_y = self.dl.mask_ref['slice0'].shape[1]
+        len_z = len(self.dl.mask_ref)
+        modified_mask_patient = np.zeros((len_x, len_y, len_z))
+        for i in range(len_z):
+            modified_mask_patient[:, :, i] = self.results['slice' + str(i)].result_mask
+
+        # Load original NIfTI
+        original = nib.load(self.dl.labels_ref[self.dl.patient])
+        # Create new NIfTI using the original spatial information
+        new_img = nib.Nifti1Image(
+            modified_mask_patient,
+            affine=original.affine,
+            header=original.header.copy(),
+        )
+
+        # Save
+        if not os.path.isdir(os.path.join(self.dl.folder, 'segmentation_error_masks')):
+            os.makedirs(os.path.join(self.dl.folder, 'segmentation_error_masks'), exist_ok=True)
+        nifti_path = os.path.join(self.dl.folder, 'segmentation_error_masks')
+        nifti_name = (
+            f"patient{self.dl.patient}_"
+            f"segmentation_error_"
+            f"{self.error_type}_"
+            f"{self.magnitude_mm}mm"
+        )
+        nib.save(new_img, os.path.join(nifti_path, nifti_name))
 
     @staticmethod
     def _json_value(value: Any) -> Any:

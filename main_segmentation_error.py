@@ -30,7 +30,7 @@ def main():
                          data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
-    number = 2
+    number = 1
     # select the current slice (first slice: slice0)
     im_slice = 'slice100'
     # define the penalty values for MSI
@@ -43,6 +43,8 @@ def main():
 
     segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="expansion", magnitude_mm=5)
 
+    segm_error_patient.save_masks_as_nifti()
+
 #    print(dl.mask_ref[im_slice])
 #    print(segm_error_patient.results[im_slice])
 
@@ -50,6 +52,7 @@ def main():
                               original_mask=dl.mask_ref[im_slice])
     viz.show_comparison()
     viz.show_contour_overlay()
+    print(segm_error_patient.metadata)
 
 
 if __name__ == '__main__':
