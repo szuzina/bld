@@ -1,3 +1,5 @@
+import numpy as np
+
 class ErrorsUtils:
     @staticmethod
     def validate_magnitude(magnitude_mm: float) -> None:

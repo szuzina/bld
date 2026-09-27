@@ -11,7 +11,7 @@ class CreateVisualization:
     """Provides 2D visualization utilities for ground truth and modified segmentation masks."""
 
     def __init__(self, segmentations: Union[SegmentationError, Dict[str, SegmentationError]],
-                 original_mask: Optional[np.ndarray] = None):
+                 original_mask: np.ndarray):
         """
         Parameters
         ----------
@@ -27,13 +27,7 @@ class CreateVisualization:
     def show_comparison(self, result: Optional[SegmentationError] = None,
                         reference_mask: Optional[np.ndarray] = None,
                         figsize: Tuple[int, int] = (14, 5)) -> None:
-        """Plot a 3-panel comparison: Reference, Perturbed mask, and Difference Map.
-
-        Difference map color code:
-        - Green: True Positive (Overlap)
-        - Red: False Positive (Spurious expansion/addition)
-        - Blue: False Negative (Missing/eroded region)
-        """
+        """Plot a 3-panel comparison: Reference, Perturbed mask, and Difference Map."""
         res = result or (
             self.segmentations
             if isinstance(self.segmentations, SegmentationError)
@@ -46,26 +40,31 @@ class CreateVisualization:
                 "A reference (original) mask must be provided to show comparisons."
             )
 
-        perturbed = res.result_mask
+        # 1. Ensure 2D shapes and cast explicitly to boolean
+        ref_b = np.squeeze(ref) > 0
+        pert_b = np.squeeze(res.result_mask) > 0
 
-        # Build RGB difference overlay:
-        # Green = TP, Red = FP, Blue = FN
-        tp = ref & perturbed
-        fp = perturbed & ~ref
-        fn = ref & ~perturbed
+        if ref_b.shape != pert_b.shape:
+            raise ValueError(f"Shape mismatch: reference {ref_b.shape} vs perturbed {pert_b.shape}")
 
-        diff_map = np.zeros((*ref.shape, 3), dtype=np.uint8)
-        diff_map[tp] = [46, 204, 113]  # Green
-        diff_map[fp] = [231, 76, 60]   # Red
-        diff_map[fn] = [52, 152, 219]  # Blue
+        # 2. Compute boolean TP, FP, FN regions
+        tp = ref_b & pert_b
+        fp = pert_b & (~ref_b)
+        fn = ref_b & (~pert_b)
+
+        # 3. Create RGB difference map
+        diff_map = np.zeros((*ref_b.shape, 3), dtype=np.uint8)
+        diff_map[tp] = [46, 204, 113]  # Green: True Positive
+        diff_map[fp] = [231, 76, 60]  # Red: False Positive
+        diff_map[fn] = [52, 152, 219]  # Blue: False Negative
 
         fig, axes = plt.subplots(1, 3, figsize=figsize)
 
-        axes[0].imshow(ref, cmap="gray")
+        axes[0].imshow(ref_b, cmap="gray")
         axes[0].set_title("Ground Truth Mask")
         axes[0].axis("off")
 
-        axes[1].imshow(perturbed, cmap="gray")
+        axes[1].imshow(pert_b, cmap="gray")
         axes[1].set_title("Modified Mask")
         axes[1].axis("off")
 
@@ -89,9 +88,9 @@ class CreateVisualization:
 
         fig, ax = plt.subplots(figsize=figsize)
         if ref is not None:
-            ax.result_mask(ref, levels=[0.5], colors=["lime"], linewidths=2)
+            ax.contour(ref, levels=[0.5], colors=["lime"], linewidths=2)
 
-        ax.result_mask(res.result_mask, levels=[0.5], colors=["red"], linestyles="dashed", linewidths=2)
+        ax.contour(res.result_mask, levels=[0.5], colors=["red"], linestyles="dashed", linewidths=2)
 
         # Proxy lines for legend
         ax.plot([], [], color="lime", label="Reference")

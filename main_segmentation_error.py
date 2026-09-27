@@ -32,7 +32,7 @@ def main():
     # select the number of the patient (first patient: 1)
     number = 2
     # select the current slice (first slice: slice0)
-    im_slice = 'slice13'
+    im_slice = 'slice100'
     # define the penalty values for MSI
 
     # load the data corresponding the selected patient
@@ -41,11 +41,15 @@ def main():
 # ----------------------------------------------------------------------------------------
 # CREATE SEGMENTATION ERRORS AND VISUALIZE
 
-    segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="expansion", magnitude_mm=1)
-    print(segm_error_patient.results)
+    segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="expansion", magnitude_mm=5)
 
-    _ = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
-                            original_mask=dl.c_ref[im_slice])
+#    print(dl.mask_ref[im_slice])
+#    print(segm_error_patient.results[im_slice])
+
+    viz = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
+                              original_mask=dl.mask_ref[im_slice])
+    viz.show_comparison()
+    viz.show_contour_overlay()
 
 
 if __name__ == '__main__':

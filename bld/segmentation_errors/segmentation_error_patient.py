@@ -35,7 +35,7 @@ class SegmentationErrorPatient:
 
     def generate_all_slices_for_one_patient(self, **kwargs: Any):
         mod_contours = {}
-        for i in range(len(self.dl.c_ref)):
+        for i in range(len(self.dl.mask_ref)):
             mod_contours['slice' + str(i)] = CreateSegmentationError(
                 mask=self.dl.mask_ref['slice' + str(i)],
                 spacing=self.dl.spacing[:2],  # dl.spacing: (x,y,z)
