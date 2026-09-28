@@ -84,10 +84,12 @@ class SegmentationErrorPatient:
         len_z = len(self.dl.mask_ref)
         modified_mask_patient = np.zeros((len_x, len_y, len_z))
         for i in range(len_z):
-            modified_mask_patient[:, :, i] = self.results['slice' + str(i)].result_mask
+            modified_mask_patient[:, :, i] = self.results['slice' + str(i)].result_mask.T
 
         # Load original NIfTI
-        original = nib.load(self.dl.labels_ref[self.dl.patient])
+        original = nib.load(self.dl.labels_ref[self.dl.patient-1])
+        # patient = 1 corresponds to the index 0 in the labels list
+
         # Create new NIfTI using the original spatial information
         new_img = nib.Nifti1Image(
             modified_mask_patient,
@@ -103,9 +105,13 @@ class SegmentationErrorPatient:
             f"patient{self.dl.patient}_"
             f"segmentation_error_"
             f"{self.error_type}_"
-            f"{self.magnitude_mm}mm"
+            f"{self.magnitude_mm}mm.nii.gz"
         )
         nib.save(new_img, os.path.join(nifti_path, nifti_name))
+
+        print("slice:", self.dl.mask_ref['slice0'].shape)
+        print("number of slices:", len(self.dl.mask_ref))
+        print("generated:", modified_mask_patient.shape)
 
     @staticmethod
     def _json_value(value: Any) -> Any:
