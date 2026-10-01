@@ -131,8 +131,11 @@ class BLDCalculator:
             # we assign the pairs to the reference contour points
             # Select the first index if np.argwhere returns a 2D array
             idx = np.argwhere(self.distance_df.iloc[i].values == self.dist_bld[i])
-            if idx.ndim > 1:
+            if idx.ndim > 2:
                 idx = idx[0]
+            else: # in case of translation, the two contours are equal, so all distances are the same
+                # --> causes problems, i hope it fixes it
+                idx = 0
             row_bld_indices[i] = idx
 
         test_df = pd.DataFrame(self.test_corrected_points.T, columns=['x', 'y'])

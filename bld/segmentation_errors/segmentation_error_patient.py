@@ -40,7 +40,7 @@ class SegmentationErrorPatient:
         for i in range(len(self.dl.mask_ref)):
             mod_contours['slice' + str(i)] = CreateSegmentationError(
                 mask=self.dl.mask_ref['slice' + str(i)],
-                spacing=self.dl.spacing[:2],  # dl.spacing: (x,y,z)
+                spacing=self.dl.spacing[:2][::-1],  # dl.spacing: (x,y,z), we need (y,x)
                 seed=0,
                 error_type=self.error_type,
                 magnitude_mm=self.magnitude_mm
@@ -108,10 +108,6 @@ class SegmentationErrorPatient:
             f"{self.magnitude_mm}mm.nii.gz"
         )
         nib.save(new_img, os.path.join(nifti_path, nifti_name))
-
-        print("slice:", self.dl.mask_ref['slice0'].shape)
-        print("number of slices:", len(self.dl.mask_ref))
-        print("generated:", modified_mask_patient.shape)
 
     @staticmethod
     def _json_value(value: Any) -> Any:

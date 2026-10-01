@@ -13,4 +13,4 @@ from bld.segmentation_errors.create_segmentation_error import CreateSegmentation
 from .segmentation_error_patient import SegmentationErrorPatient
 from .generate_series import GenerateSeries
 from .create_visualization import CreateVisualization
-
+from .error_metrics_evaluator import ErrorMetricsEvaluator

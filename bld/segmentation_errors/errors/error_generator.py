@@ -15,8 +15,7 @@ class ErrorGenerator:
     mask:
         NumPy array containing the binary segmentation mask.
     spacing:
-        Physical spacing of the mask axes in mm, as
-        (axis0_spacing, axis1_spacing).
+        Physical spacing of the mask axes in mm, as (spacing_y, spacing_x).
     seed:
         Seed for reproducible random-boundary errors.
 
