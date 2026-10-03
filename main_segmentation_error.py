@@ -4,6 +4,7 @@ from bld.data import DataDownloader, DataLoader
 from bld.segmentation_errors import SegmentationErrorPatient
 from bld.segmentation_errors import CreateVisualization
 from bld.segmentation_errors import ErrorMetricsEvaluator
+from bld.segmentation_errors import ErrorMetricsAnalyzer
 
 
 def main():
@@ -34,9 +35,6 @@ def main():
 
     # select the number of the patient (first patient: 1)
     number = 4
-    # select the current slice (first slice: slice0)
-    im_slice = 'slice129'
-    # define the penalty values for MSI
 
     # load the data corresponding the selected patient
     dl = DataLoader(patient=number, data_downloader=ddl)
@@ -46,13 +44,20 @@ def main():
 
     segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="translation", magnitude_mm=10)
     segm_error_patient.save_masks_as_nifti()
+    print(segm_error_patient.metadata)
 
-    viz = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
-                              original_mask=dl.mask_ref[im_slice])
-    # viz.show_comparison()
-    # viz.show_contour_overlay()
-    # print(segm_error_patient.metadata)
+    visualize = False
 
+    im_slice = 'slice129'
+
+    if visualize:
+
+        viz = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
+                                  original_mask=dl.mask_ref[im_slice])
+        viz.show_comparison()
+        viz.show_contour_overlay()
+
+# ----------------------------------------------------------------------------------------------
 # CREATE DIFFERENT ERRORS FOR ONE PATIENT
 
     create_errors = False
@@ -69,15 +74,43 @@ def main():
                 segm_e_p = SegmentationErrorPatient(dl=dl, error_type=error_item, magnitude_mm=i)
                 segm_e_p.save_masks_as_nifti()
 
+# ------------------------------------------------------------------------------------------------
 # CALCULATE METRICS
 
-    il_const = 10  # inside level
+    calculate_metrics = False
+
+    il_const = 1  # inside level
     ol_const = 1  # outside level
 
-    evaluator = ErrorMetricsEvaluator(dl=dl,
-                                      error_dir="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks",
-                                      il=il_const, ol=ol_const)
-    print(evaluator.results)
+    if calculate_metrics:
+
+        evaluator = ErrorMetricsEvaluator(dl=dl,
+                                          error_dir="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks",
+                                          il=il_const, ol=ol_const)
+        evaluator.save_results_as_csv(
+            output_path="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
+        )
+
+        print(evaluator.results)
+
+# ---------------------------------------------------------------------------------------------------
+# ANALYZE RESULTS
+
+    analyze_result = False
+
+    if analyze_result:
+        analyzer = ErrorMetricsAnalyzer(
+            results_file="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
+        )
+
+        summary = analyzer.get_summary()
+        print(summary)
+
+        mean = analyzer.get_mean_by_error()
+        print(mean)
+
+        correlations = analyzer.get_correlation_by_error()
+        print(correlations)
 
 
 if __name__ == '__main__':

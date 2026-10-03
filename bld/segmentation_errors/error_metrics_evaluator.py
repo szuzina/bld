@@ -50,9 +50,6 @@ class ErrorMetricsEvaluator:
                               num_slices_ref)  # Use minimum to avoid exceeding available slices
 
         self.results = self.evaluate_all_tests(dir_path=error_dir)
-        self.save_results_as_csv(
-            output_path="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
-        )
 
     def find_msi_for_one_slice(self, slice_index: int, points_test_slice: np.ndarray[int]) -> List:
         """
