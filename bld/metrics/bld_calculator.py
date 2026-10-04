@@ -126,17 +126,21 @@ class BLDCalculator:
         Calculates the BLD distances after moving back the test contour to the original location.
         """
 
-        row_bld_indices = np.zeros(len(self.distance_df))
+        row_bld_indices = np.zeros(len(self.distance_df), dtype=int)
+
         for i in range(len(self.distance_df)):
-            # we assign the pairs to the reference contour points
-            # Select the first index if np.argwhere returns a 2D array
-            idx = np.argwhere(self.distance_df.iloc[i].values == self.dist_bld[i])
-            if idx.ndim > 2:
-                idx = idx[0]
-            else: # in case of translation, the two contours are equal, so all distances are the same
-                # --> causes problems, i hope it fixes it
-                idx = 0
-            row_bld_indices[i] = idx
+            idx = np.argwhere(
+                self.distance_df.iloc[i].values == self.dist_bld[i]
+            )
+
+            if idx.size == 0:
+                raise ValueError(
+                    f"No matching test point found for reference point {i} "
+                    f"with BLD={self.dist_bld[i]}"
+                )
+
+            # Take the first test point if there are multiple equally distant points.
+            row_bld_indices[i] = idx[0, 0]
 
         test_df = pd.DataFrame(self.test_corrected_points.T, columns=['x', 'y'])
         list_row_bld_indices = row_bld_indices.tolist()

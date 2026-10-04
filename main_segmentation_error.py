@@ -1,10 +1,10 @@
-from skimage.morphology import erosion
-
 from bld.data import DataDownloader, DataLoader
 from bld.segmentation_errors import SegmentationErrorPatient
 from bld.segmentation_errors import CreateVisualization
-from bld.segmentation_errors import ErrorMetricsEvaluator
 from bld.segmentation_errors import ErrorMetricsAnalyzer
+from bld.segmentation_errors import MultipleErrorsEvaluator
+from bld.segmentation_errors import DataLoaderErrors
+from bld.metrics import MSICalculator
 
 
 def main():
@@ -33,40 +33,42 @@ def main():
     ddl = DataDownloader(ref_url=folder_url_ref, test_url=folder_url_test, csv_data_id=csv_link,
                          data_folder="data", root_folder='./')
 
-    # select the number of the patient (first patient: 1)
-    number = 4
+# ------------------------------------------------------------------------------------------------
+#    ERROR GENERATION
+# ------------------------------------------------------------------------------------------------
 
+    # select the number of the patient (first patient: 1)
+    number = 3
     # load the data corresponding the selected patient
     dl = DataLoader(patient=number, data_downloader=ddl)
 
-# ----------------------------------------------------------------------------------------
+# ----------------------------------------
 # CREATE A SEGMENTATION ERROR AND VISUALIZE
 
-    segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="translation", magnitude_mm=10)
-    segm_error_patient.save_masks_as_nifti()
-    print(segm_error_patient.metadata)
+    create_one_error = False
 
-    visualize = False
+    if create_one_error:
 
-    im_slice = 'slice129'
+        segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="expansion", magnitude_mm=1)
+        segm_error_patient.save_masks_as_nifti()
+#        print(segm_error_patient.metadata)
 
-    if visualize:
+        im_slice = 'slice70'
 
         viz = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
                                   original_mask=dl.mask_ref[im_slice])
         viz.show_comparison()
         viz.show_contour_overlay()
 
-# ----------------------------------------------------------------------------------------------
+# ---------------------------------------
 # CREATE DIFFERENT ERRORS FOR ONE PATIENT
 
-    create_errors = False
+    create_errors = True
 
     if create_errors:
         for i in [1, 3, 5, 10]:
             error_type_list = ["expansion",
                                "erosion",
-                               "translation",
                                "directional_expansion",
                                "directional_erosion",
                                "random_boundary"]
@@ -74,29 +76,31 @@ def main():
                 segm_e_p = SegmentationErrorPatient(dl=dl, error_type=error_item, magnitude_mm=i)
                 segm_e_p.save_masks_as_nifti()
 
+
 # ------------------------------------------------------------------------------------------------
+#    EVALUATION
+# ------------------------------------------------------------------------------------------------
+
 # CALCULATE METRICS
 
-    calculate_metrics = False
+    calculate_metrics = True
 
     il_const = 1  # inside level
     ol_const = 1  # outside level
 
     if calculate_metrics:
 
-        evaluator = ErrorMetricsEvaluator(dl=dl,
-                                          error_dir="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks",
-                                          il=il_const, ol=ol_const)
+        evaluator = MultipleErrorsEvaluator(ddl=ddl,
+                                            error_dir="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks",
+                                            il=il_const, ol=ol_const)
         evaluator.save_results_as_csv(
             output_path="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
         )
 
-        print(evaluator.results)
-
-# ---------------------------------------------------------------------------------------------------
+# -----------------------------------
 # ANALYZE RESULTS
 
-    analyze_result = False
+    analyze_result = True
 
     if analyze_result:
         analyzer = ErrorMetricsAnalyzer(

@@ -33,11 +33,11 @@ def main():
                          data_folder="data", root_folder='./')
 
     # select the number of the patient (first patient: 1)
-    number = 2
+    number = 4
     # select the current slice (first slice: slice0)
-    im_slice = 'slice13'
+    im_slice = 'slice80'
     # define the penalty values for MSI
-    il_const = 10  # inside level
+    il_const = 1  # inside level
     ol_const = 1  # outside level
 
     # load the data corresponding the selected patient
