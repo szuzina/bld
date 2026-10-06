@@ -19,6 +19,13 @@ class ErrorGenerator:
     seed:
         Seed for reproducible random-boundary errors.
 
+    error_type:
+        One of ``expansion``, ``erosion``, ``translation``,
+        ``directional_expansion``, ``directional_erosion`` or
+        ``random_boundary``.
+    magnitude_mm:
+        Error magnitude in mm. For translation this may be a scalar or a vector.
+
     Notes
     -----
     The original mask is never modified in place. All operations return a new NumPy array.
@@ -35,15 +42,7 @@ class ErrorGenerator:
 
     def __init__(self, mask: np.ndarray, spacing: Tuple[float, float],
                  error_type: str, magnitude_mm: Union[float, Sequence[float]], seed: Optional[int] = None):
-        """
-                error_type:
-            One of ``expansion``, ``erosion``, ``translation``,
-            ``directional_expansion``, ``directional_erosion`` or
-            ``random_boundary``.
-        magnitude_mm:
-            Error magnitude in mm. For translation this may be a scalar or a vector.
-            For directional errors it is a scalar.
-        """
+
         self.mask = mask
         self.spacing = spacing
 
