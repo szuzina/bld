@@ -4,6 +4,7 @@ import os
 import cv2 as cv
 from natsort import natsorted
 import SimpleITK as SITK
+import nibabel as nib
 
 from bld.data import DataDownloader
 
@@ -41,6 +42,9 @@ class DataLoader:
         self.mask_ref: dict = dict()
         self.get_masks()
 
+        self.spacing = ()
+        self.get_spacing()
+
     def get_contours(self, number: int):
         """
         Finds the contours from one image slice.
@@ -75,7 +79,7 @@ class DataLoader:
 
         Returns:
           dictionary:
-            keys - slice number
+            keys - slice number (starting from 0)
             values - contours of the corresponding slice, each contour is one 2D numpy array
             with the coordinates of the contour points
         """
@@ -116,3 +120,9 @@ class DataLoader:
         for i in range(number_of_slices):
             self.mask_test['slice' + str(i)] = test[i, :, :]
             self.mask_ref['slice' + str(i)] = ref[i, :, :]
+
+    def get_spacing(self):
+        labels_test = natsorted(glob.glob(os.path.join(self.folder, "masks_test/*")))
+        img = nib.load(labels_test[self.patient - 1])
+        self.spacing = img.header.get_zooms()[:3] # (x,y,z)
+
