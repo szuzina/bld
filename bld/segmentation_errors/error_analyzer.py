@@ -262,7 +262,7 @@ class ErrorMetricsAnalyzer:
             row = {"error_type": error_type, "n": len(group)}
             for metric in ["dice", "jaccard", "hausdorff"]:
                 if len(group) >= 2:
-                    row[f"msi_{metric}_spearman"] = (group["msi"].corr(group[metric],method="spearman"))
+                    row[f"msi_{metric}_spearman"] = (group["msi"].corr(group[metric], method="spearman"))
                 else:
                     row[f"msi_{metric}_spearman"] = np.nan
             results.append(row)

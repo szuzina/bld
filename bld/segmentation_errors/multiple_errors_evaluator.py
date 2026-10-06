@@ -135,4 +135,3 @@ class MultipleErrorsEvaluator:
                         "jaccard": jaccard,
                         "hausdorff": hausdorff,
                     })
-

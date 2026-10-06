@@ -71,7 +71,7 @@ class ErrorGenerator:
         ErrorsUtils.validate_magnitude(magnitude_mm)
         if magnitude_mm == 0:
             return self.mask.copy()
-        structure = self._ellipse_structure(magnitude_mm)
+        structure = ErrorGenerator.ellipse_structure(magnitude_mm, spacing=self.spacing)
         return ndimage.binary_dilation(input=self.mask, structure=structure).astype(self.mask.dtype)
 
     def erosion(self, magnitude_mm: float) -> np.ndarray:
@@ -79,7 +79,7 @@ class ErrorGenerator:
         ErrorsUtils.validate_magnitude(magnitude_mm)
         if magnitude_mm == 0:
             return self.mask.copy()
-        structure = self._ellipse_structure(magnitude_mm)
+        structure = ErrorGenerator.ellipse_structure(magnitude_mm, spacing=self.spacing)
         return ndimage.binary_erosion(input=self.mask, structure=structure)
 
     def translation(self, shift_mm: Union[float, Sequence[float]]) -> np.ndarray:
@@ -222,7 +222,7 @@ class ErrorGenerator:
             return self.mask.copy()
 
         # 2D structuring element scaled by physical spacing (spacing_y, spacing_x)
-        structure = self._ellipse_structure(magnitude_mm)
+        structure = ErrorGenerator.ellipse_structure(magnitude_mm, spacing=self.spacing)
 
         outer_band = ndimage.binary_dilation(self.mask, structure=structure) & ~self.mask
         inner_band = self.mask & ~ndimage.binary_erosion(self.mask, structure=structure)
@@ -240,12 +240,13 @@ class ErrorGenerator:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
-    def _ellipse_structure(self, radius_mm: float) -> np.ndarray:
+    @staticmethod
+    def ellipse_structure(radius_mm: float, spacing: Tuple[float, float]) -> np.ndarray:
         """Generate a 2D binary ellipse structuring element based on physical spacing."""
-        radii_px = [radius_mm / s for s in self.spacing]
+        radii_px = [radius_mm / s for s in spacing]
         y_max = int(np.ceil(radii_px[0]))
         x_max = int(np.ceil(radii_px[1]))
 
         y, x = np.ogrid[-y_max:y_max + 1, -x_max:x_max + 1]
-        dist_sq = (y * self.spacing[0]) ** 2 + (x * self.spacing[1]) ** 2
+        dist_sq = (y * spacing[0]) ** 2 + (x * spacing[1]) ** 2
         return dist_sq <= radius_mm ** 2
