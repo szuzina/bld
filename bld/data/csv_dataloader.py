@@ -42,7 +42,8 @@ class CSVDataLoader:
         csv_directory = os.path.join(self.folder, 'csv_dir')
 
         labels_ref = natsorted(glob.glob(os.path.join(self.folder, "masks_ref", "*")))
-        n = str(labels_ref[self.p_number-1][-10:-7])
+        n = "".join(ch for ch in labels_ref[self.p_number-1] if ch.isdigit())
+        print(n)
 
         patient_path = os.path.join(csv_directory, f'p{n}.csv')
         df = pd.read_csv(filepath_or_buffer=patient_path, header=None, sep=';')
