@@ -6,6 +6,10 @@ from bld.segmentation_errors import MultipleErrorsEvaluator
 from bld.segmentation_errors import DataLoaderErrors
 from bld.metrics import MSICalculator
 
+ERROR_PATH = "/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks"
+OUTPUT_PATH = "/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
+RESULT_FILE = "/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
+
 
 def main():
     # myoma 40 test cases
@@ -91,10 +95,10 @@ def main():
     if calculate_metrics:
 
         evaluator = MultipleErrorsEvaluator(ddl=ddl,
-                                            error_dir="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks",
+                                            error_dir=ERROR_PATH,
                                             il=il_const, ol=ol_const)
         evaluator.save_results_as_csv(
-            output_path="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
+            output_path=OUTPUT_PATH
         )
 
 # -----------------------------------
@@ -104,7 +108,7 @@ def main():
 
     if analyze_result:
         analyzer = ErrorMetricsAnalyzer(
-            results_file="/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
+            results_file=RESULT_FILE
         )
 
         summary = analyzer.get_summary()
