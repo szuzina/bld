@@ -46,7 +46,7 @@ class MultipleErrorsEvaluator:
 
         dl_errors = DataLoaderErrors(data_downloader=self.ddl, test_file_path=test_path)
         print('ref:', dl_errors.ref_patient)
-        metrics_ev = MetricsEvaluatorErrors(dataloader_errors=dl_errors)
+        metrics_ev = MetricsEvaluatorErrors(dataloader_errors=dl_errors, il=self.il, ol=self.ol)
 
         evaluation_metrics = EvaluationMetrics(msi=metrics_ev.msindex,
                                                dice=metrics_ev.dice,

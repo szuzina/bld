@@ -43,7 +43,7 @@ class ErrorGenerator:
     def __init__(self, mask: np.ndarray, spacing: Tuple[float, float],
                  error_type: str, magnitude_mm: Union[float, Sequence[float]], seed: Optional[int] = None):
 
-        self.mask = mask
+        self.mask = mask.astype(bool)
         self.spacing = spacing
 
         self.error_type = error_type.lower().strip()

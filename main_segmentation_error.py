@@ -3,8 +3,6 @@ from bld.segmentation_errors import SegmentationErrorPatient
 from bld.segmentation_errors import CreateVisualization
 from bld.segmentation_errors import ErrorMetricsAnalyzer
 from bld.segmentation_errors import MultipleErrorsEvaluator
-from bld.segmentation_errors import DataLoaderErrors
-from bld.metrics import MSICalculator
 
 ERROR_PATH = "/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks"
 OUTPUT_PATH = "/home/fazekas/PycharmProjects/MSI/data/segmentation_error_masks/metrics.csv"
@@ -41,8 +39,10 @@ def main():
 #    ERROR GENERATION
 # ------------------------------------------------------------------------------------------------
 
+    # all patients
+    patient_number = 26
     # select the number of the patient (first patient: 1)
-    number = 3
+    number = 1
     # load the data corresponding the selected patient
     dl = DataLoader(patient=number, data_downloader=ddl)
 
@@ -54,10 +54,10 @@ def main():
     if create_one_error:
 
         segm_error_patient = SegmentationErrorPatient(dl=dl, error_type="expansion", magnitude_mm=1)
-        segm_error_patient.save_masks_as_nifti()
+#        segm_error_patient.save_masks_as_nifti()
 #        print(segm_error_patient.metadata)
 
-        im_slice = 'slice70'
+        im_slice = 'slice115'
 
         viz = CreateVisualization(segmentations=segm_error_patient.results[im_slice],
                                   original_mask=dl.mask_ref[im_slice])
@@ -67,18 +67,43 @@ def main():
 # ---------------------------------------
 # CREATE DIFFERENT ERRORS FOR ONE PATIENT
 
-    create_errors = True
+    create_errors = False
 
     if create_errors:
+
         for i in [1, 3, 5, 10]:
             error_type_list = ["expansion",
                                "erosion",
                                "directional_expansion",
                                "directional_erosion",
+                               "translation",
                                "random_boundary"]
             for error_item in error_type_list:
                 segm_e_p = SegmentationErrorPatient(dl=dl, error_type=error_item, magnitude_mm=i)
                 segm_e_p.save_masks_as_nifti()
+
+# ---------------------------------------
+# CREATE DIFFERENT ERRORS FOR ALL PATIENTS
+
+    create_errors_for_all = False
+
+    if create_errors_for_all:
+        for n in range(1, patient_number+1):  # first patient is n.o. 1.
+            dl_for_all_errors = DataLoader(patient=n, data_downloader=ddl)
+            # create the original test mask with expansion=0 mm to have all the data together
+            segm_original_test = SegmentationErrorPatient(dl=dl_for_all_errors, error_type="expansion", magnitude_mm=0)
+            segm_original_test.save_masks_as_nifti()
+            # create the errors
+            for i in [0, 1, 3, 5, 10]:
+                error_type_list = ["expansion",
+                                   "erosion",
+                                   "directional_expansion",
+                                   "directional_erosion",
+                                   "translation",
+                                   "random_boundary"]
+                for error_item in error_type_list:
+                    segm_e_p = SegmentationErrorPatient(dl=dl_for_all_errors, error_type=error_item, magnitude_mm=i)
+                    segm_e_p.save_masks_as_nifti()
 
 
 # ------------------------------------------------------------------------------------------------
@@ -89,7 +114,7 @@ def main():
 
     calculate_metrics = True
 
-    il_const = 1  # inside level
+    il_const = 10  # inside level
     ol_const = 1  # outside level
 
     if calculate_metrics:
@@ -104,7 +129,7 @@ def main():
 # -----------------------------------
 # ANALYZE RESULTS
 
-    analyze_result = True
+    analyze_result = False
 
     if analyze_result:
         analyzer = ErrorMetricsAnalyzer(

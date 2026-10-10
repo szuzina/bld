@@ -37,9 +37,9 @@ class SegmentationErrorPatient:
 
     def generate_all_slices_for_one_patient(self, **kwargs: Any):
         mod_contours = {}
-        for i in range(len(self.dl.mask_ref)):
+        for i in range(len(self.dl.mask_test)):
             mod_contours['slice' + str(i)] = CreateSegmentationError(
-                mask=self.dl.mask_ref['slice' + str(i)],
+                mask=self.dl.mask_test['slice' + str(i)],
                 spacing=self.dl.spacing[:2][::-1],  # dl.spacing: (x,y,z), we need (y,x)
                 seed=0,
                 error_type=self.error_type,
@@ -50,8 +50,8 @@ class SegmentationErrorPatient:
         voxel_volume = float(np.prod(self.dl.spacing))
 
         original_volume = 0
-        for i in range(len(self.dl.mask_ref)):
-            original_volume += float(self.dl.mask_ref['slice' + str(i)].sum() * voxel_volume)
+        for i in range(len(self.dl.mask_test)):
+            original_volume += float(self.dl.mask_test['slice' + str(i)].sum() * voxel_volume)
         modified_volume = 0
         for i in range(len(mod_contours)):
             modified_volume += float(mod_contours['slice' + str(i)].result_mask.sum() * voxel_volume)
@@ -79,15 +79,15 @@ class SegmentationErrorPatient:
         return mod_contours, metadata
 
     def save_masks_as_nifti(self):
-        len_x = self.dl.mask_ref['slice0'].shape[0]
-        len_y = self.dl.mask_ref['slice0'].shape[1]
-        len_z = len(self.dl.mask_ref)
+        len_x = self.dl.mask_test['slice0'].shape[0]
+        len_y = self.dl.mask_test['slice0'].shape[1]
+        len_z = len(self.dl.mask_test)
         modified_mask_patient = np.zeros((len_x, len_y, len_z))
         for i in range(len_z):
             modified_mask_patient[:, :, i] = self.results['slice' + str(i)].result_mask.T
 
         # Load original NIfTI
-        original = nib.load(self.dl.labels_ref[self.dl.patient-1])
+        original = nib.load(self.dl.labels_test[self.dl.patient-1])
         # patient = 1 corresponds to the index 0 in the labels list
 
         # Create new NIfTI using the original spatial information
