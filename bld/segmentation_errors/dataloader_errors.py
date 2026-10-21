@@ -1,6 +1,7 @@
 import glob
 import os
 import re
+from pathlib import Path
 
 import cv2 as cv
 from natsort import natsorted
@@ -48,10 +49,28 @@ class DataLoaderErrors:
         self.get_spacing()
 
     def find_patient_number(self):
-        match = re.search(r"patient(\d+)", str(self.test_file_path))
-        if not match:
-            raise ValueError(f"Patient number not found in: {self.test_file_path}")
-        return int(match.group(1))
+        ref_dir = Path("/home/zsvizi/PycharmProjects/bld/data/masks_ref")
+        test_path = Path(self.test_file_path)
+        target_patient = test_path.name.split("_")[0]
+        # 1. Get all .nii.gz files and sort them naturally
+        ref_files = natsorted(ref_dir.glob("*.nii.gz"))
+        ref_ids = [f.name.split(".")[0] for f in ref_files]
+        # 2. Find the index of the target patient
+        try:
+            # .index() gives the 0-based position (0 for the first file, 1 for the second, etc.)
+            index_0_based = ref_ids.index(target_patient)
+            
+            # Add 1 if you want the 1-based position (e.g., the 40th file)
+            position_1_based = index_0_based + 1
+
+            print(f"Found {target_patient}!")
+            print(f"  - 0-based index: {index_0_based}")
+            print(f"  - Position in sorted list: {position_1_based}")
+
+        except ValueError:
+            print(f"Patient {target_patient} was not found in {ref_dir}")
+
+        return position_1_based
 
     def get_contours(self, number: int):
         """
