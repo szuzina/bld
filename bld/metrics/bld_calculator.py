@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import pandas as pd
 
-from bld.metrics import DistanceCalculator
+from ..metrics import DistanceCalculator
 
 
 class BLDCalculator:

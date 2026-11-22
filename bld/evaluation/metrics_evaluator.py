@@ -3,10 +3,10 @@ from typing import Optional, List
 import nibabel as nib
 import numpy as np
 
-from bld.data import DataLoader
-from bld.data import DataDownloader
-from bld.evaluation.traditional_metrics import TraditionalMetricsCalculator
-from bld.metrics import MSICalculator
+from ..data import DataLoader
+from ..data import DataDownloader
+from ..evaluation.traditional_metrics import TraditionalMetricsCalculator
+from ..metrics import MSICalculator
 
 
 class MetricsEvaluator:

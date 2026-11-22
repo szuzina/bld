@@ -5,7 +5,7 @@ import cv2 as cv
 from natsort import natsorted
 import SimpleITK as SITK
 
-from bld.data import DataDownloader
+from ..data import DataDownloader
 
 
 class DataLoader:
